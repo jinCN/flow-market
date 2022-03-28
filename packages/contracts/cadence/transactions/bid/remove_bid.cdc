@@ -1,11 +1,11 @@
-import MatrixMarketplaceOpenBid from "../contracts/MatrixMarketplaceOpenBid.cdc"
+import MatrixMarketPlaceOpenBid from "../../contracts/MatrixMarketPlaceOpenBid.cdc"
 
 transaction(bidId: UInt64) {
-    let openBid: &MatrixMarketplaceOpenBid.OpenBid{MatrixMarketplaceOpenBid.OpenBidManager}
+    let openBid: &MatrixMarketPlaceOpenBid.OpenBid{MatrixMarketPlaceOpenBid.OpenBidManager}
 
     prepare(acct: AuthAccount) {
-        self.openBid = acct.borrow<&MatrixMarketplaceOpenBid.OpenBid{MatrixMarketplaceOpenBid.OpenBidManager}>(from: MatrixMarketplaceOpenBid.OpenBidStoragePath)
-            ?? panic("Missing or mis-typed MatrixMarketplaceOpenBid.OpenBid")
+        self.openBid = acct.borrow<&MatrixMarketPlaceOpenBid.OpenBid{MatrixMarketPlaceOpenBid.OpenBidManager}>(from: MatrixMarketPlaceOpenBid.OpenBidStoragePath)
+            ?? panic("Missing or mis-typed MatrixMarketPlaceOpenBid.OpenBid")
     }
 
     execute {

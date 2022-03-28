@@ -1,4 +1,4 @@
-import NonFungibleToken from "core/NonFungibleToken.cdc"
+import NonFungibleToken from "lib/NonFungibleToken.cdc"
 import LicensedNFT from "LicensedNFT.cdc"
 
 // MatrixMarketPlaceNFT token contract

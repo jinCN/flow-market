@@ -1,13 +1,13 @@
-import MatrixMarketplaceOpenBid from "../contracts/MatrixMarketplaceOpenBid.cdc"
+import MatrixMarketPlaceOpenBid from "../../contracts/MatrixMarketPlaceOpenBid.cdc"
 
 // This transaction installs the OpenBid resource in an account.
 
 transaction {
     prepare(acct: AuthAccount) {
-        if acct.borrow<&MatrixMarketplaceOpenBid.OpenBid>(from: MatrixMarketplaceOpenBid.OpenBidStoragePath) == nil {
-            let OpenBid <- MatrixMarketplaceOpenBid.createOpenBid() as! @MatrixMarketplaceOpenBid.OpenBid
-            acct.save(<-OpenBid, to: MatrixMarketplaceOpenBid.OpenBidStoragePath)
-            acct.link<&MatrixMarketplaceOpenBid.OpenBid{MatrixMarketplaceOpenBid.OpenBidPublic}>(MatrixMarketplaceOpenBid.OpenBidPublicPath, target: MatrixMarketplaceOpenBid.OpenBidStoragePath)
+        if acct.borrow<&MatrixMarketPlaceOpenBid.OpenBid>(from: MatrixMarketPlaceOpenBid.OpenBidStoragePath) == nil {
+            let OpenBid <- MatrixMarketPlaceOpenBid.createOpenBid() as! @MatrixMarketPlaceOpenBid.OpenBid
+            acct.save(<-OpenBid, to: MatrixMarketPlaceOpenBid.OpenBidStoragePath)
+            acct.link<&MatrixMarketPlaceOpenBid.OpenBid{MatrixMarketPlaceOpenBid.OpenBidPublic}>(MatrixMarketPlaceOpenBid.OpenBidPublicPath, target: MatrixMarketPlaceOpenBid.OpenBidStoragePath)
         }
     }
 }
