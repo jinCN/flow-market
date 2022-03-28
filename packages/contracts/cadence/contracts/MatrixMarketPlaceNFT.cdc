@@ -9,6 +9,7 @@ pub contract MatrixMarketPlaceNFT : NonFungibleToken, LicensedNFT {
 
     pub var collectionPublicPath: PublicPath
     pub var collectionStoragePath: StoragePath
+    pub var collectionPrivatePath: PrivatePath
     pub var minterPublicPath: PublicPath
     pub var minterStoragePath: StoragePath
 
@@ -149,6 +150,7 @@ pub contract MatrixMarketPlaceNFT : NonFungibleToken, LicensedNFT {
         self.totalSupply = 0
         self.collectionPublicPath = /public/MatrixMarketPlaceNFTCollection
         self.collectionStoragePath = /storage/MatrixMarketPlaceNFTCollection
+        self.collectionPrivatePath = /private/MatrixMarketPlaceNFTCollection
         self.minterPublicPath = /public/MatrixMarketPlaceNFTMinter
         self.minterStoragePath = /storage/MatrixMarketPlaceNFTMinter
 
@@ -159,7 +161,10 @@ pub contract MatrixMarketPlaceNFT : NonFungibleToken, LicensedNFT {
         let collection <- self.createEmptyCollection()
         self.account.save(<- collection, to: self.collectionStoragePath)
         self.account.link<&{NFTReceiver,NonFungibleToken.CollectionPublic,NonFungibleToken.Receiver}>(self.collectionPublicPath, target: self.collectionStoragePath)
-
+        self.account.link<&{NonFungibleToken.CollectionPublic, NonFungibleToken.Provider}>(
+            self.collectionPrivatePath,
+            target: self.collectionStoragePath
+        )
         emit ContractInitialized()
     }
 }
