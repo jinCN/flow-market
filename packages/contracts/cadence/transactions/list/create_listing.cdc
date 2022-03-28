@@ -5,11 +5,11 @@ import FungibleToken from "../../contracts/lib/FungibleToken.cdc"
 
 // This transaction sets up account 0x01 for the marketplace tutorial
 // by publishing a Vault reference and creating an empty NFT Collection.
-transaction {
-
+transaction(nftId: UInt64, price: UFix64) {
+           
     let storefront: &NFTStorefront.Storefront
 
-    let exampleNFTProvider: Capability<&MatrixMarketPlaceNFT.Collection{NonFungibleToken.Provider, NonFungibleToken.CollectionPublic}>
+    let matrixMarketPlaceNFTProvider: Capability<&MatrixMarketPlaceNFT.Collection{NonFungibleToken.Provider, NonFungibleToken.CollectionPublic}>
 
     let tokenReceiver: Capability<&FungibleToken.Vault{FungibleToken.Receiver}>
 
@@ -21,8 +21,8 @@ transaction {
             acct.link<&MatrixMarketPlaceNFT.Collection{NonFungibleToken.Provider, NonFungibleToken.CollectionPublic}>(MatrixMarketPlaceNFT.collectionPrivatePath, target: MatrixMarketPlaceNFT.collectionStoragePath)
         }
 
-        self.exampleNFTProvider = acct.getCapability<&MatrixMarketPlaceNFT.Collection{NonFungibleToken.Provider, NonFungibleToken.CollectionPublic}>(MatrixMarketPlaceNFT.collectionPrivatePath)!
-        assert(self.exampleNFTProvider.borrow() != nil, message: "Missing or mis-typed MatrixMarketPlaceNFT.Collection provider")
+        self.matrixMarketPlaceNFTProvider = acct.getCapability<&MatrixMarketPlaceNFT.Collection{NonFungibleToken.Provider, NonFungibleToken.CollectionPublic}>(MatrixMarketPlaceNFT.collectionPrivatePath)!
+        assert(self.matrixMarketPlaceNFTProvider.borrow() != nil, message: "Missing or mis-typed MatrixMarketPlaceNFT.Collection provider")
 
 
         self.tokenReceiver = acct.getCapability<&FungibleToken.Vault{FungibleToken.Receiver}>(/public/MainReceiver)!
@@ -30,13 +30,13 @@ transaction {
 
         let saleCut = NFTStorefront.SaleCut(
             receiver: self.tokenReceiver,
-            amount: 10.0
+            amount: price
         )
 
         self.storefront.createListing(
-            nftProviderCapability: self.exampleNFTProvider,
+            nftProviderCapability: self.matrixMarketPlaceNFTProvider,
             nftType: Type<@NonFungibleToken.NFT>(),
-            nftID: 0,
+            nftID: nftId,
             salePaymentVaultType: Type<@FungibleToken.Vault>(),
             saleCuts: [saleCut]
             )
