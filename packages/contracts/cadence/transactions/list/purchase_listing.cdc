@@ -3,28 +3,31 @@ import NonFungibleToken from "../../contracts/lib/NonFungibleToken.cdc"
 import MatrixMarketPlaceNFT from "../../contracts/MatrixMarketPlaceNFT.cdc"
 import FungibleToken from "../../contracts/lib/FungibleToken.cdc"
 
-transaction(listingResourceId: UInt64, adminAddress: Address) {
+transaction(listingResourceId: UInt64, storefrontAddress: Address) {
     let paymentVault: @FungibleToken.Vault
     let matrixMarketPlaceNFTCollection: &MatrixMarketPlaceNFT.Collection{NonFungibleToken.Receiver}
     let storefront: &NFTStorefront.Storefront{NFTStorefront.StorefrontPublic}
     let listing: &NFTStorefront.Listing{NFTStorefront.ListingPublic}
 
     prepare(acct: AuthAccount) {
-        self.storefront = getAccount(adminAddress)   //testnet 0xa2811f685dccc3ec
+        self.storefront = getAccount(storefrontAddress)
             .getCapability<&NFTStorefront.Storefront{NFTStorefront.StorefrontPublic}>(
                 NFTStorefront.StorefrontPublicPath
             )!
             .borrow()
             ?? panic("Could not borrow Storefront from provided address")
 
+        // check and get list
         self.listing = self.storefront.borrowListing(listingResourceID: listingResourceId)
                   ?? panic("No Offer with that ID in Storefront")
         let price = self.listing.getDetails().salePrice
 
-        let mainFlowVault = acct.borrow<&FungibleToken.Vault>(from: /storage/MainVault)
+        // get flowtoken from buyer flowTokenVault
+        let mainFlowVault = acct.borrow<&FungibleToken.Vault>(from: /storage/flowTokenVault)
             ?? panic("Cannot borrow FlowToken vault from acct storage")
         self.paymentVault <- mainFlowVault.withdraw(amount: price)
 
+        // to access MatrixMarketPlaceNFT
         self.matrixMarketPlaceNFTCollection = acct.borrow<&MatrixMarketPlaceNFT.Collection{NonFungibleToken.Receiver}>(
             from: MatrixMarketPlaceNFT.collectionStoragePath) ?? panic("Cannot borrow NFT collection receiver from account")
     }
@@ -33,14 +36,10 @@ transaction(listingResourceId: UInt64, adminAddress: Address) {
      let item <- self.listing.purchase(
      payment: <-self.paymentVault
      )
-
+        // deposit nft to buyer collection
        self.matrixMarketPlaceNFTCollection.deposit(token: <-item)
 
-        /* //-
-        error: Execution failed:
-        computation limited exceeded: 100
-        */
-        // Be kind and recycle
+        // cleanup list
         self.storefront.cleanup(listingResourceID: listingResourceId)
         log("transaction done")
     }

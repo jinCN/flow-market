@@ -1,8 +1,5 @@
-import * as fcl from "@onflow/fcl";
-
-export const getNFTsScript: string = fcl.script`
-import NonFungibleToken from 0xNON_FUNGIBLE_TOKEN_ADDRESS
-import MatrixMarketPlaceNFT from 0xNFT_ADDRESS
+import NonFungibleToken from "../contracts/lib/NonFungibleToken.cdc"
+import MatrixMarketPlaceNFT from "../contracts/MatrixMarketPlaceNFT.cdc"
 pub fun main(address: Address): [UInt64]{
     let collection = getAccount(address)
         .getCapability(MatrixMarketPlaceNFT.collectionPublicPath)
@@ -10,4 +7,4 @@ pub fun main(address: Address): [UInt64]{
     let ids = collection.getIDs()
 
     return ids
-}`;
+}
