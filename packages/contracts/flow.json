@@ -43,7 +43,7 @@
     },
     "NFTStorefront":"./cadence/contracts/lib/NFTStorefront.cdc",
     "MatrixMarketPlaceNFT": "./cadence/contracts/MatrixMarketPlaceNFT.cdc",
-    "MatrixMarketplaceOpenBid": "./cadence/contracts/MatrixMarketplaceOpenBid.cdc"
+    "MatrixMarketPlaceOpenBid": "./cadence/contracts/MatrixMarketPlaceOpenBid.cdc"
   },
   "networks": {
     "emulator": "127.0.0.1:3569",
@@ -73,7 +73,7 @@
     "emulator": {
       "emulator-account": ["FUSD", "FungibleToken", "NonFungibleToken",
         "NFTStorefront",
-        "MatrixMarketplaceOpenBid",
+        "MatrixMarketPlaceOpenBid",
         "LicensedNFT",
         "MatrixMarketPlaceNFT"
       ]
@@ -82,7 +82,7 @@
       "testnet-account": ["FUSD", "FungibleToken", "NonFungibleToken"],
       "testnet-account2": [
         "NFTStorefront",
-        "MatrixMarketplaceOpenBid",
+        "MatrixMarketPlaceOpenBid",
         "LicensedNFT",
         "MatrixMarketPlaceNFT"
       ]

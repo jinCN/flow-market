@@ -1,15 +1,16 @@
-import NFTStorefront from "../../contracts/lib/NFTStorefront.cdc"
-import NonFungibleToken from "../../contracts/lib/NonFungibleToken.cdc"
-import MatrixMarketPlaceNFT from "../../contracts/MatrixMarketPlaceNFT.cdc"
-import FungibleToken from "../../contracts/lib/FungibleToken.cdc"
+import * as fcl from "@onflow/fcl";
 
+export const purchaseListingScript: string = fcl.transaction`
+import FungibleToken from 0xFUNGIBLE_TOKEN_ADDRESS
+import FUSD from 0xFUSD_ADDRESS
 transaction(listingResourceId: UInt64, adminAddress: Address) {
+    
     let paymentVault: @FungibleToken.Vault
     let matrixMarketPlaceNFTCollection: &MatrixMarketPlaceNFT.Collection{NonFungibleToken.Receiver}
     let storefront: &NFTStorefront.Storefront{NFTStorefront.StorefrontPublic}
     let listing: &NFTStorefront.Listing{NFTStorefront.ListingPublic}
 
-    prepare(acct: AuthAccount) {
+    prepare(signer: AuthAccount) {
         self.storefront = getAccount(adminAddress)   //testnet 0xa2811f685dccc3ec
             .getCapability<&NFTStorefront.Storefront{NFTStorefront.StorefrontPublic}>(
                 NFTStorefront.StorefrontPublicPath
@@ -21,29 +22,22 @@ transaction(listingResourceId: UInt64, adminAddress: Address) {
                   ?? panic("No Offer with that ID in Storefront")
         let price = self.listing.getDetails().salePrice
 
-        let mainFlowVault = acct.borrow<&FungibleToken.Vault>(from: /storage/MainVault)
-            ?? panic("Cannot borrow FlowToken vault from acct storage")
+        let mainFlowVault = signer.borrow<&FungibleToken.Vault>(from: /storage/MainVault)
+            ?? panic("Cannot borrow FlowToken vault from signer storage")
         self.paymentVault <- mainFlowVault.withdraw(amount: price)
 
-        self.matrixMarketPlaceNFTCollection = acct.borrow<&MatrixMarketPlaceNFT.Collection{NonFungibleToken.Receiver}>(
+        self.matrixMarketPlaceNFTCollection = signer.borrow<&MatrixMarketPlaceNFT.Collection{NonFungibleToken.Receiver}>(
             from: MatrixMarketPlaceNFT.collectionStoragePath) ?? panic("Cannot borrow NFT collection receiver from account")
     }
 
     execute {
-     let item <- self.listing.purchase(
-     payment: <-self.paymentVault
-     )
-
-       self.matrixMarketPlaceNFTCollection.deposit(token: <-item)
-
-        /* //-
-        error: Execution failed:
-        computation limited exceeded: 100
-        */
-        // Be kind and recycle
+        let item <- self.listing.purchase(
+            payment: <-self.paymentVault
+        )
+        
+        self.matrixMarketPlaceNFTCollection.deposit(token: <-item)
+        
         self.storefront.cleanup(listingResourceID: listingResourceId)
         log("transaction done")
     }
-
-    //- Post to check item is in collection?
-}
+}`;
