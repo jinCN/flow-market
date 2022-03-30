@@ -65,7 +65,7 @@
       "key": "7a437e23da24e7772896c556262fafa58af9fde12890be5f33509c8ce8b94e64"
     },
     "testnet-account2": {
-      "address": "0xa2811f685dccc3ec",
+      "address": "0xa56c5e5fd9b9ca22",
       "key": "7a437e23da24e7772896c556262fafa58af9fde12890be5f33509c8ce8b94e64"
     }
   },
@@ -79,11 +79,9 @@
       ]
     },
     "testnet": {
-      "testnet-account": ["FUSD", "FungibleToken", "NonFungibleToken"],
-      "testnet-account2": [
+
+      "testnet-account": [
         "NFTStorefront",
-        "MatrixMarketPlaceOpenBid",
-        "LicensedNFT",
         "MatrixMarketPlaceNFT"
       ]
     }

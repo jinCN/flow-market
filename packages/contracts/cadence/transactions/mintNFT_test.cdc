@@ -1,8 +1,8 @@
 // SetupAccount2Transaction.cdc
-import FungibleToken from "../contracts/lib/FungibleToken.cdc"
-import MatrixMarketPlaceNFT from "../contracts/MatrixMarketPlaceNFT.cdc"
-import FlowToken from "../contracts/lib/FlowToken.cdc"
-import NonFungibleToken from "../contracts/lib/NonFungibleToken.cdc"
+import FungibleToken from 0x9a0766d93b6608b7
+import MatrixMarketPlaceNFT from 0x7f3812b53dd4de20
+import FlowToken from 0x7e60df042a9c0868
+import NonFungibleToken from 0x631e88ae7f1d7c20
 
 // This transaction adds an empty Vault to account 0x02
 // and mints an NFT with id=1 that is deposited into
