@@ -1,9 +1,9 @@
 import * as fcl from "@onflow/fcl";
 
 export const removeListingScript: string = fcl.transaction`
-import FungibleToken from 0xFUNGIBLE_TOKEN_ADDRESS
-import FUSD from 0xFUSD_ADDRESS
-transaction(amount: UFix64, recipient: Address) {
+import NFTStorefront from 0xNFT_STOREFRONT
+
+transaction(listingResourceID: UInt64) {
     let storefront: &NFTStorefront.Storefront{NFTStorefront.StorefrontManager}
 
     prepare(signer: AuthAccount) {

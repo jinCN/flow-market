@@ -30,9 +30,9 @@ export interface NFTClient {
     initNFTCollection(): Promise<string>;
     initStorefront(): Promise<string>;
     getNFTs(account: string): Promise<MatrixMarketPlaceNFT[]>;
-    createList(nftId: number, price: number): Promise<string>;
+    createList(nftId: number, price: string): Promise<string>;
     purchaseList(listingResourceId: number, adminAddress: string): Promise<string>;
-    removeList(amount: number, recipient: string): Promise<string>;
+    removeList(listingResourceID: number): Promise<string>;
     checkCapacity(
         address: string,
         currentBalance: number,
@@ -58,8 +58,8 @@ export class StorefrontClient implements NFTClient {
                     .put("0xFUNGIBLE_TOKEN_ADDRESS", "0x9a0766d93b6608b7")
                     .put("0xFUSD_ADDRESS", "0xe223d8a629e49c68")
                     .put("0xFLOW_TOKEN_ADDRESS", "0x7e60df042a9c0868")
-                    .put("0xNFT_STOREFRONT", "0xa2811f685dccc3ec")
-                    .put("0xNFT_ADDRESS", "0xa2811f685dccc3ec")
+                    .put("0xNFT_STOREFRONT", "0x7f3812b53dd4de20")
+                    .put("0xNFT_ADDRESS", "0x7f3812b53dd4de20")
                     .put("0xNON_FUNGIBLE_TOKEN_ADDRESS", "0x631e88ae7f1d7c20");
                 break;
             }
@@ -215,11 +215,7 @@ export class StorefrontClient implements NFTClient {
      */
     public async getNFTs(account: string): Promise<MatrixMarketPlaceNFT[]> {
         try {
-            const response = await fcl.send([
-                getNFTsScript,
-                fcl.args([fcl.arg(account, t.Address)]),
-                fcl.limit(2000)
-            ]);
+            const response = await fcl.send([getNFTsScript, fcl.args([fcl.arg(account, t.Address)]), fcl.limit(2000)]);
             console.log(response);
             return fcl.decode(response);
         } catch (error) {
@@ -272,7 +268,7 @@ export class StorefrontClient implements NFTClient {
         }
     }
 
-    public async createList(nftId: number, price: number): Promise<string> {
+    public async createList(nftId: number, price: string): Promise<string> {
         try {
             const response = await fcl.send([
                 createListingScript,
@@ -314,11 +310,11 @@ export class StorefrontClient implements NFTClient {
         }
     }
 
-    public async removeList(amount: number, recipient: string): Promise<string> {
+    public async removeList(listingResourceID: number): Promise<string> {
         try {
             const response = await fcl.send([
                 removeListingScript,
-                fcl.args([fcl.arg(amount, t.UInt64), fcl.arg(recipient, t.Address)]),
+                fcl.args([fcl.arg(listingResourceID, t.UInt64)]),
                 fcl.proposer(fcl.currentUser().authorization),
                 fcl.authorizations([fcl.currentUser().authorization]),
                 fcl.limit(1000),

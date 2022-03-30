@@ -2,8 +2,11 @@ import * as fcl from "@onflow/fcl";
 
 export const purchaseListingScript: string = fcl.transaction`
 import FungibleToken from 0xFUNGIBLE_TOKEN_ADDRESS
-import FUSD from 0xFUSD_ADDRESS
-transaction(listingResourceId: UInt64, adminAddress: Address) {
+import NFTStorefront from 0xNFT_STOREFRONT
+import NonFungibleToken from 0xNON_FUNGIBLE_TOKEN_ADDRESS
+import MatrixMarketPlaceNFT from 0xNFT_ADDRESS
+
+transaction(listingResourceId: UInt64, storefrontAddress: Address) {
     
     let paymentVault: @FungibleToken.Vault
     let matrixMarketPlaceNFTCollection: &MatrixMarketPlaceNFT.Collection{NonFungibleToken.Receiver}
@@ -11,7 +14,7 @@ transaction(listingResourceId: UInt64, adminAddress: Address) {
     let listing: &NFTStorefront.Listing{NFTStorefront.ListingPublic}
 
     prepare(signer: AuthAccount) {
-        self.storefront = getAccount(adminAddress)   //testnet 0xa2811f685dccc3ec
+        self.storefront = getAccount(storefrontAddress)   //testnet 0xa2811f685dccc3ec
             .getCapability<&NFTStorefront.Storefront{NFTStorefront.StorefrontPublic}>(
                 NFTStorefront.StorefrontPublicPath
             )!
@@ -22,7 +25,7 @@ transaction(listingResourceId: UInt64, adminAddress: Address) {
                   ?? panic("No Offer with that ID in Storefront")
         let price = self.listing.getDetails().salePrice
 
-        let mainFlowVault = signer.borrow<&FungibleToken.Vault>(from: /storage/MainVault)
+        let mainFlowVault = signer.borrow<&FungibleToken.Vault>(from: /storage/flowTokenVault)
             ?? panic("Cannot borrow FlowToken vault from signer storage")
         self.paymentVault <- mainFlowVault.withdraw(amount: price)
 
