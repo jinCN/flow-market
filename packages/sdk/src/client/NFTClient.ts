@@ -1,4 +1,4 @@
-import {MatrixMarketPlaceNFT} from "./model";
+import {MatrixMarketplaceNFT} from "./model";
 import {FlowEnv} from "./env";
 
 
@@ -11,7 +11,7 @@ export interface NFTClient {
     checkNFTsCollection(address: string): Promise<boolean>;
     initNFTCollection(): Promise<string>;
     initStorefront(): Promise<string>;
-    getNFTs(account: string): Promise<MatrixMarketPlaceNFT[]>;
+    getNFTs(account: string): Promise<MatrixMarketplaceNFT[]>;
     createList(nftId: number, price: string): Promise<string>;
     purchaseList(listingResourceId: number, adminAddress: string): Promise<string>;
     removeList(listingResourceID: number): Promise<string>;

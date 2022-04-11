@@ -12,7 +12,7 @@ import {getNFTsScript} from "../cadence/get_nfts";
 import {createListingScript} from "../cadence/create_list";
 import {purchaseListingScript} from "../cadence/purchase_list";
 import {removeListingScript} from "../cadence/remove_list";
-import {MatrixMarketPlaceNFT} from "./model";
+import {MatrixMarketplaceNFT} from "./model";
 import {NFTClient} from "./NFTClient";
 import {FlowEnv} from "./env";
 
@@ -188,7 +188,7 @@ export class StorefrontClient implements NFTClient {
      * @returns {Promise<MatrixMarketPlaceNFT[]>} transaction id
      * @example ret = await client.getNFTs("0x01cf0e2f2f715450");
      */
-    public async getNFTs(account: string): Promise<MatrixMarketPlaceNFT[]> {
+    public async getNFTs(account: string): Promise<MatrixMarketplaceNFT[]> {
         try {
             const response = await fcl.send([getNFTsScript, fcl.args([fcl.arg(account, t.Address)]), fcl.limit(2000)]);
             console.log(response);
