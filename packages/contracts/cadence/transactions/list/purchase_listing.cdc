@@ -1,11 +1,11 @@
 import NFTStorefront from "../../contracts/lib/NFTStorefront.cdc"
 import NonFungibleToken from "../../contracts/lib/NonFungibleToken.cdc"
-import MatrixMarketPlaceNFT from "../../contracts/MatrixMarketPlaceNFT.cdc"
+import MatrixMarketplaceNFT from "../../contracts/MatrixMarketplaceNFT.cdc"
 import FungibleToken from "../../contracts/lib/FungibleToken.cdc"
 
 transaction(listingResourceId: UInt64, storefrontAddress: Address) {
     let paymentVault: @FungibleToken.Vault
-    let matrixMarketPlaceNFTCollection: &MatrixMarketPlaceNFT.Collection{NonFungibleToken.Receiver}
+    let matrixMarketPlaceNFTCollection: &MatrixMarketplaceNFT.Collection{NonFungibleToken.Receiver}
     let storefront: &NFTStorefront.Storefront{NFTStorefront.StorefrontPublic}
     let listing: &NFTStorefront.Listing{NFTStorefront.ListingPublic}
 
@@ -27,16 +27,16 @@ transaction(listingResourceId: UInt64, storefrontAddress: Address) {
             ?? panic("Cannot borrow FlowToken vault from acct storage")
         self.paymentVault <- mainFlowVault.withdraw(amount: price)
 
-        // to access MatrixMarketPlaceNFT
-        self.matrixMarketPlaceNFTCollection = acct.borrow<&MatrixMarketPlaceNFT.Collection{NonFungibleToken.Receiver}>(
-            from: MatrixMarketPlaceNFT.collectionStoragePath) ?? panic("Cannot borrow NFT collection receiver from account")
+        // to access MatrixMarketplaceNFT
+        self.matrixMarketPlaceNFTCollection = acct.borrow<&MatrixMarketplaceNFT.Collection{NonFungibleToken.Receiver}>(
+            from: MatrixMarketplaceNFT.CollectionStoragePath) ?? panic("Cannot borrow NFT Collection receiver from account")
     }
 
     execute {
      let item <- self.listing.purchase(
      payment: <-self.paymentVault
      )
-        // deposit nft to buyer collection
+        // deposit nft to buyer Collection
        self.matrixMarketPlaceNFTCollection.deposit(token: <-item)
 
         // cleanup list
@@ -44,5 +44,5 @@ transaction(listingResourceId: UInt64, storefrontAddress: Address) {
         log("transaction done")
     }
 
-    //- Post to check item is in collection?
+    //- Post to check item is in Collection?
 }

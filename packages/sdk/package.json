@@ -1,6 +1,6 @@
 {
   "name": "@white-matrix/matrix-flow-market-sdk",
-  "version": "0.0.19",
+  "version": "0.1.0",
   "main": "./dist/index.js",
   "license": "MIT",
   "scripts": {

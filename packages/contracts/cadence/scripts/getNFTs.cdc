@@ -1,9 +1,9 @@
-import NonFungibleToken from 0x7f3812b53dd4de20
-import MatrixMarketPlaceNFT from 0xa2811f685dccc3ec
+import NonFungibleToken from "../contracts/lib/NonFungibleToken.cdc"
+import MatrixMarketplaceNFT from "../contracts/MatrixMarketplaceNFT.cdc"
 
 pub fun main(address: Address): [UInt64]{
     let collection = getAccount(address)
-        .getCapability(MatrixMarketPlaceNFT.collectionPublicPath)
+        .getCapability(MatrixMarketplaceNFT.CollectionPublicPath)
         .borrow<&{NonFungibleToken.CollectionPublic,NonFungibleToken.Receiver}>() ?? panic("NFT Collection not found")
     let ids = collection.getIDs()
     return ids

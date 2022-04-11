@@ -1,7 +1,7 @@
 import FungibleToken from "./lib/FungibleToken.cdc"
 import NonFungibleToken from "./lib/NonFungibleToken.cdc"
 
-pub contract MatrixMarketPlaceOpenBid {
+pub contract MatrixMarketplaceOpenBid {
 
     // initialize StoragePath and OpenBidPublicPath
     pub event MatrixMarketPlaceOpenBidInitialized()

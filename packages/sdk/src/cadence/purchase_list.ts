@@ -4,12 +4,12 @@ export const purchaseListingScript: string = fcl.transaction`
 import FungibleToken from 0xFUNGIBLE_TOKEN_ADDRESS
 import NFTStorefront from 0xNFT_STOREFRONT
 import NonFungibleToken from 0xNON_FUNGIBLE_TOKEN_ADDRESS
-import MatrixMarketPlaceNFT from 0xNFT_ADDRESS
+import MatrixMarketplaceNFT from 0xNFT_ADDRESS
 
 transaction(listingResourceId: UInt64, storefrontAddress: Address) {
     
     let paymentVault: @FungibleToken.Vault
-    let matrixMarketPlaceNFTCollection: &MatrixMarketPlaceNFT.Collection{NonFungibleToken.Receiver}
+    let matrixMarketplaceNFTCollection: &MatrixMarketplaceNFT.Collection{NonFungibleToken.Receiver}
     let storefront: &NFTStorefront.Storefront{NFTStorefront.StorefrontPublic}
     let listing: &NFTStorefront.Listing{NFTStorefront.ListingPublic}
 
@@ -29,8 +29,8 @@ transaction(listingResourceId: UInt64, storefrontAddress: Address) {
             ?? panic("Cannot borrow FlowToken vault from signer storage")
         self.paymentVault <- mainFlowVault.withdraw(amount: price)
 
-        self.matrixMarketPlaceNFTCollection = signer.borrow<&MatrixMarketPlaceNFT.Collection{NonFungibleToken.Receiver}>(
-            from: MatrixMarketPlaceNFT.collectionStoragePath) ?? panic("Cannot borrow NFT collection receiver from account")
+        self.matrixMarketplaceNFTCollection = signer.borrow<&MatrixMarketplaceNFT.Collection{NonFungibleToken.Receiver}>(
+            from: MatrixMarketplaceNFT.CollectionStoragePath) ?? panic("Cannot borrow NFT collection receiver from account")
     }
 
     execute {
@@ -38,7 +38,7 @@ transaction(listingResourceId: UInt64, storefrontAddress: Address) {
             payment: <-self.paymentVault
         )
         
-        self.matrixMarketPlaceNFTCollection.deposit(token: <-item)
+        self.matrixMarketplaceNFTCollection.deposit(token: <-item)
         
         self.storefront.cleanup(listingResourceID: listingResourceId)
         log("transaction done")

@@ -35,3 +35,4 @@ flow transactions send cadence/transactions/list/create_listing.cdc 0 2.2 --sign
 flow transactions send cadence/transactions/list/remove_listing.cdc 43115912 --signer testnet-account2 --network=testnet
 flow transactions send cadence/transactions/mintNFT_test.cdc 0x0c2d36ee502cea9e --signer testnet-account --network=testnet
 
+ 

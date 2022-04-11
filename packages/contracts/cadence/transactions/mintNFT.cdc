@@ -1,38 +1,37 @@
 // SetupAccount2Transaction.cdc
 import FungibleToken from "../contracts/lib/FungibleToken.cdc"
-import MatrixMarketPlaceNFT from "../contracts/MatrixMarketPlaceNFT.cdc"
+import MatrixMarketplaceNFT from "../contracts/MatrixMarketplaceNFT.cdc"
 import FlowToken from "../contracts/lib/FlowToken.cdc"
 import NonFungibleToken from "../contracts/lib/NonFungibleToken.cdc"
 
 // This transaction adds an empty Vault to account 0x02
 // and mints an NFT with id=1 that is deposited into
 // the NFT collection on account 0x01.
-transaction(recipients: [Address], metadata: [{String: String}], royaltyAddress: Address, royaltyFee: UFix64) {
+transaction(recipientBatch: [Address], subCollectionIdBatch: [String], metadataBatch: [{String: String}]) {
 
-  // Private reference to this account's minter resource
-  let minterRef: &MatrixMarketPlaceNFT.Minter
-
+  let minter: &MatrixMarketplaceNFT.NFTMinter
+  let creator: AuthAccount
 
   prepare(acct: AuthAccount) {
-
-    // Create a public Receiver capability to the Vault
-    let ReceiverRef = acct.link<&FungibleToken.Vault{FungibleToken.Receiver, FungibleToken.Balance}>(/public/flowTokenReceiver, target: /storage/flowTokenVault)
-
-    // Borrow a reference for the NFTMinter in storage   acct1 is minter
-    self.minterRef = acct.borrow<&MatrixMarketPlaceNFT.Minter>(from: MatrixMarketPlaceNFT.minterStoragePath)
+    self.minter = acct.borrow<&MatrixMarketplaceNFT.NFTMinter>(from: MatrixMarketplaceNFT.MinterStoragePath)
         ?? panic("Could not borrow owner's NFT minter reference")
+    self.creator = acct;
   }
+
   execute {
-    // Get the recipient's public account object
-    let recipient = getAccount(recipients[size - 1])
-    let ros = [MatrixMarketPlaceNFT.Royalty(address: recipients, fee: royaltyFee)]
-    // Get the Collection reference for the receiver
-    // getting the public capability and borrowing a reference from it
+    var size = recipientBatch.length
+    // check all args length
+    if (size != subCollectionIdBatch.length || size != metadataBatch.length) {
+      panic ("recipientBatch, subCollectionIdBatch, metadataBatch length not equal")
+    }
 
-    let receiverRef = recipient.getCapability<&{NonFungibleToken.Receiver}>(MatrixMarketPlaceNFT.collectionPublicPath)
-
-    // Mint an NFT and deposit   it into account 0x01's collection
-    self.minterRef.mintTo(creator: receiverRef, metadata: metadata, royalties: ros)
-    log("New NFT minted for account 1")
+    while size > 0 {
+      let recipientAccount = getAccount(recipientBatch[size - 1])
+      let subCollectionId = subCollectionIdBatch[size - 1]
+      let metadata = metadataBatch[size - 1]
+      let recipient = recipientAccount.getCapability(MatrixMarketplaceNFT.CollectionPublicPath).borrow<&{NonFungibleToken.CollectionPublic}>() ?? panic("recipient collection not found")
+      self.minter.mintNFT(creator: self.creator, recipient: recipient, subCollectionId: subCollectionId, metadata: metadata)
+      size = size - 1
+    }
   }
 }
