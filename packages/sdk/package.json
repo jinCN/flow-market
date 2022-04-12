@@ -1,6 +1,6 @@
 {
-  "name": "@white-matrix/matrix-flow-market-sdk",
-  "version": "0.1.0",
+  "name": "@white-matrix/matrix-marketplace-nft-sdk",
+  "version": "0.0.6",
   "main": "./dist/index.js",
   "license": "MIT",
   "scripts": {

@@ -1,20 +1,23 @@
-// SetupAccount2Transaction.cdc
-import FungibleToken from "../contracts/lib/FungibleToken.cdc"
-import MatrixMarketplaceNFT from "../contracts/MatrixMarketplaceNFT.cdc"
-import FlowToken from "../contracts/lib/FlowToken.cdc"
-import NonFungibleToken from "../contracts/lib/NonFungibleToken.cdc"
+import * as fcl from "@onflow/fcl";
+
+export const mintNFTs: string = fcl.script`
+import NonFungibleToken from 0xNON_FUNGIBLE_TOKEN_ADDRESS
+import MatrixMarketplaceNFT from 0xNFT_ADDRESS
+import FungibleToken from 0xFUNGIBLE_TOKEN_ADDRESS
+import FlowToken from 0xFLOW_TOKEN_ADDRESS
 
 // This transaction adds an empty Vault to account 0x02
 // and mints an NFT with id=1 that is deposited into
 // the NFT collection on account 0x01.
-transaction(recipientBatch: [Address], subCollectionIdBatch: [String], metadataBatch: [{String: String}]) {
+transaction(recipientBatch: [Address], subCollectionIdBatch: [String], metadataBatch: [[String,String]]) {
 
   let minter: &MatrixMarketplaceNFT.NFTMinter
   let creator: AuthAccount
 
   prepare(acct: AuthAccount) {
-    self.minter = acct.borrow<&MatrixMarketplaceNFT.NFTMinter>(from: MatrixMarketplaceNFT.MinterPublicPath)
-        ?? panic("Could not borrow owner's NFT minter reference")
+    self.minter = getAccount(0xNFT_ADDRESS).getCapability(MatrixMarketplaceNFT.MinterPublicPath)
+                                  .borrow<&MatrixMarketplaceNFT.NFTMinter>()
+                                  ?? panic("Could not borrow minter capability from public collection")
     self.creator = acct;
   }
 
@@ -28,10 +31,10 @@ transaction(recipientBatch: [Address], subCollectionIdBatch: [String], metadataB
     while size > 0 {
       let recipientAccount = getAccount(recipientBatch[size - 1])
       let subCollectionId = subCollectionIdBatch[size - 1]
-      let metadata = metadataBatch[size - 1]
+      let metadata = {metadataBatch[size - 1][0] :metadataBatch[size - 1][1]}
       let recipient = recipientAccount.getCapability(MatrixMarketplaceNFT.CollectionPublicPath).borrow<&{NonFungibleToken.CollectionPublic}>() ?? panic("recipient collection not found")
       self.minter.mintNFT(creator: self.creator, recipient: recipient, subCollectionId: subCollectionId, metadata: metadata)
       size = size - 1
     }
   }
-}
+}`;

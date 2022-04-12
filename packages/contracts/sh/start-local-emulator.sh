@@ -33,6 +33,9 @@ flow transactions send cadence/transactions/list/create_storefront.cdc --signer 
 flow transactions send cadence/transactions/list/create_storefront_capability.cdc --signer testnet-account2 --network=testnet
 flow transactions send cadence/transactions/list/create_listing.cdc 0 2.2 --signer testnet-account2 --network=testnet
 flow transactions send cadence/transactions/list/remove_listing.cdc 43115912 --signer testnet-account2 --network=testnet
-flow transactions send cadence/transactions/mintNFT_test.cdc 0x0c2d36ee502cea9e --signer testnet-account --network=testnet
+flow transactions send cadence/transactions/mintNFT_test.cdc [0x9a3bdd00396c6458] --signer testnet-account2 --network=testnet
+flow transactions send cadence/transactions/mintNFT.cdc '[0x9a3bdd00396c6458]' '["asd"]' '[{"version","123"}]' --signer testnet-account2 --network=testnet
+
+flow transactions send cadence/transactions/create_public_minter_for_factory.cdc --signer testnet-account --network=testnet
 
  

@@ -1,2 +1,2 @@
-export * from "./client/StorefrontClient";
+export * from "./client/MatrixMarketplaceNFTClient";
 export * as fcl from "@onflow/fcl"

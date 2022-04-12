@@ -11,7 +11,6 @@ pub contract MatrixMarketplaceNFT : NonFungibleToken {
     pub let MinterStoragePath: StoragePath
     pub let MinterPublicPath: PublicPath
     //pub var CollectionPrivatePath: PrivatePath
-
     pub event ContractInitialized()
     pub event Withdraw(id: UInt64, from: Address?)
     pub event Deposit(id: UInt64, to: Address?)
@@ -126,7 +125,7 @@ pub contract MatrixMarketplaceNFT : NonFungibleToken {
         pub fun borrowNFT(id: UInt64): &NonFungibleToken.NFT {
             return &self.ownedNFTs[id] as &NonFungibleToken.NFT
         }
- 
+
         pub fun borrowMatrixMarketplaceNFT(id: UInt64): &MatrixMarketplaceNFT.NFT? {
             if self.ownedNFTs[id] != nil {
                 // Create an authorized reference to allow downcasting
@@ -184,7 +183,7 @@ pub contract MatrixMarketplaceNFT : NonFungibleToken {
 
             emit Mint(id: tokenRef.id, creator: creator.address, metadata: metadata)
 
-            return tokenRef 
+            return tokenRef
         }
     }
 
@@ -215,4 +214,3 @@ pub contract MatrixMarketplaceNFT : NonFungibleToken {
         emit ContractInitialized()
     }
 }
- 
