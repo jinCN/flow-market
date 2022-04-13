@@ -8,5 +8,5 @@ export interface NFTClient {
     checkNFTsCollection(address: string): Promise<boolean>;
     initNFTCollection(): Promise<string>;
     getNFTs(account: string): Promise<MatrixMarketplaceNFT[]>;
-    mintNFTs(recipientBatch: [string], subCollectionIdBatch: [string], metadataBatch: [{string: string}]): Promise<boolean>;
+    mintNFTs(nftAdminAddress: string, recipientBatch: [string], subCollectionIdBatch: [string], metadataBatch:  [{key:string , value:string}]): Promise<string>;
 }

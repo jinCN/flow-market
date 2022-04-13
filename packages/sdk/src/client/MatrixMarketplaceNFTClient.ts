@@ -52,11 +52,11 @@ export class MatrixMarketplaceNFTClient implements NFTClient {
         }
     }
 
-    public async mintNFTs(recipientBatch: [string], subCollectionIdBatch: [string], metadataBatch: [{string :string}]): Promise<boolean> {
+    public async mintNFTs(nftAdminAddress: string, recipientBatch: string[], subCollectionIdBatch: string[], metadataBatch: Array<{[key:string]:string}>): Promise<string> {
         try {
             const response = await fcl.send([
                 mintNFTs,
-                fcl.args([fcl.arg(recipientBatch, [t.Address]), fcl.arg(subCollectionIdBatch, [t.String]), fcl.arg(metadataBatch)]),
+                fcl.args([fcl.arg(nftAdminAddress, t.Address), fcl.arg(recipientBatch, t.Array(t.Address)), fcl.arg(subCollectionIdBatch, t.Array(t.String)), fcl.arg(metadataBatch, t.Array(t.Dictionary({key: t.String, value: t.String})))]),
                 fcl.proposer(fcl.currentUser().authorization),
                 fcl.authorizations([fcl.currentUser().authorization]),
                 fcl.limit(1000),
@@ -145,6 +145,4 @@ export class MatrixMarketplaceNFTClient implements NFTClient {
             return Promise.reject(error);
         }
     }
-
-
 }

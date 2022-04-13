@@ -4,7 +4,7 @@ import {
     fcl,
     FlowEnv,
     MatrixMarketplaceNFTClient
-} from "@white-matrix/matrix-marketplace-nft-sdk"
+} from "@matrix-labs/matrix-marketplace-nft-sdk"
 const client = new MatrixMarketplaceNFTClient();
 function App() {
 
@@ -22,14 +22,14 @@ function App() {
 
 
 
-    const mint = useCallback(async () => {
+    const mint = async () => {
         let ret;
         const user = await fcl.currentUser().snapshot();
         console.log(user);
-        let arg : Array<{[key:string]:string}> = [{sfg:"123"}]
-        ret = await client.mintNFTs(["0x9a3bdd00396c6458"], ["1231as"], arg as any);
+        ret = await client.mintNFTs('0x7f3812b53dd4de20',[user.addr], ["1231as"],  [{key:"version",value:"1.0.0"}]).catch(console.error);
         console.log(ret);
-    },[]);
+    };
+
 
     const checkNFTsCollection = async () => {
         let ret;
@@ -68,9 +68,9 @@ function App() {
       <button onClick={getNFTs} className="App-link">
           getNFTs
       </button>
-      <button onClick={mint} className="App-link">
-          mint
-      </button>
+        <button onClick={mint} className="App-link">
+            mint
+        </button>
     </div>
   );
 }
