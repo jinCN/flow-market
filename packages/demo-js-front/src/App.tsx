@@ -1,19 +1,17 @@
 import React, {useCallback, useEffect} from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import {
-  fcl,
-  StorefrontClient,
-  FlowEnv,
-} from "@white-matrix/matrix-flow-market-sdk/dist";
-
-const client = new StorefrontClient();
+    fcl,
+    FlowEnv,
+    MatrixMarketplaceNFTClient
+} from "@white-matrix/matrix-marketplace-nft-sdk"
+const client = new MatrixMarketplaceNFTClient();
 function App() {
 
     const check = useCallback(async () => {
         // await client.setupGlobalFcl(FlowEnv.localEmulator);
         // await client.setupGlobalFcl(FlowEnv.flowMainnet);
-        await client.setupGlobalFcl(FlowEnv.flowTestnet);
+        await client.setupGlobalFcl(FlowEnv.FlowEnv.flowTestnet);
         await fcl.logIn();
         await fcl.authenticate();
     },[]);
@@ -24,19 +22,12 @@ function App() {
 
 
 
-    const transfer = useCallback(async () => {
+    const mint = useCallback(async () => {
         let ret;
         const user = await fcl.currentUser().snapshot();
         console.log(user);
-
-        // check assets (mainnet)
-        ret = await client.getNFTs("0xa2811f685dccc3ec");
-        console.log(ret);
-
-        // ret = await client.purchaseList(35, "0xed2a0254c4130116");
-        // console.log(ret);
-
-        ret = await client.getNFTs("0xa2811f685dccc3ec");
+        let arg : Array<{[key:string]:string}> = [{sfg:"123"}]
+        ret = await client.mintNFTs(["0x9a3bdd00396c6458"], ["1231as"], arg as any);
         console.log(ret);
     },[]);
 
@@ -63,51 +54,12 @@ function App() {
         console.log(ret);
     };
 
-    const initStorefront = async () => {
-
-        let ret;
-        ret = await client.initStorefront();
-        console.log(ret);
-    };
-
     const initNFTCollection = async () => {
 
         let ret;
         ret = await client.initNFTCollection();
         console.log(ret);
     };
-
-    const createList = async () => {
-
-        let ret;
-        ret = await client.createList(3, "2.0");
-        console.log(ret);
-    };
-
-    const purchaseList = async () => {
-
-        let ret;
-        ret = await client.purchaseList(43240166, "0xeddb249e99d82047");
-        console.log(ret);
-    };
-
-    const removeList = async () => {
-
-        let ret;
-        ret = await client.removeList(43234808);
-        console.log(ret);
-    };
-    // ret = await client.initAssetsCollection();
-    // console.log(ret);
-
-    // ret = await client.checkVoucherCollection(user.addr);
-    // console.log(ret);
-    //
-    // ret = await client.initVoucherCollection();
-    // console.log(ret);
-
-    // ret = await client.transferVoucher("0x01cf0e2f2f715450", 0);
-    // console.log(ret);
 
 
   return (
@@ -121,17 +73,8 @@ function App() {
       <button onClick={getNFTs} className="App-link">
           getNFTs
       </button>
-      <button onClick={initStorefront} className="App-link">
-          initStorefront
-      </button>
-      <button onClick={createList} className="App-link">
-          createList
-      </button>
-      <button onClick={purchaseList} className="App-link">
-          purchaseList
-      </button>
-      <button onClick={removeList} className="App-link">
-          removeList
+      <button onClick={mint} className="App-link">
+          mint
       </button>
     </div>
   );
