@@ -11,7 +11,7 @@ function App() {
     const check = useCallback(async () => {
         // await client.setupGlobalFcl(FlowEnv.localEmulator);
         // await client.setupGlobalFcl(FlowEnv.flowMainnet);
-        await client.setupGlobalFcl(FlowEnv.FlowEnv.flowTestnet);
+        await client.setupGlobalFcl(FlowEnv.flowTestnet);
         await fcl.logIn();
         await fcl.authenticate();
     },[]);
@@ -42,12 +42,7 @@ function App() {
     const getNFTs = async () => {
 
         let ret;
-        ret = await client.getNFTs("0xa56c5e5fd9b9ca22");
-        console.log(ret);
-        // ret = await client.getNFTs("0x7f3812b53dd4de20");
-        // console.log(ret);
-        // ret = await client.getNFTs("0x9a3bdd00396c6458");
-        // console.log(ret);
+
         const user = await fcl.currentUser().snapshot();
         console.log(user);
         ret = await client.getNFTs(user.addr);

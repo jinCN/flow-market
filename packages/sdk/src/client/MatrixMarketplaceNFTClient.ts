@@ -8,8 +8,8 @@ import {getFLOWBalanceScript} from "../cadence/get_flow_balance";
 import {getFUSDBalanceScript} from "../cadence/get_fusd_balance";
 import {mintNFTs} from "../cadence/mint_nfts";
 import {NFTClient} from "./NFTClient";
-import fcl from "@onflow/fcl";
-import t from "@onflow/types";
+import * as fcl from "@onflow/fcl";
+import * as t from "@onflow/types";
 
 export class MatrixMarketplaceNFTClient implements NFTClient {
     public async setupGlobalFcl(env: FlowEnv): Promise<void> {
