@@ -9,7 +9,7 @@ import FlowToken from 0xFLOW_TOKEN_ADDRESS
 // This transaction adds an empty Vault to account 0x02
 // and mints an NFT with id=1 that is deposited into
 // the NFT collection on account 0x01.
-transaction(recipientBatch: [Address], subCollectionIdBatch: [String], metadataBatch: [[String,String]]) {
+transaction(recipientBatch: [Address], subCollectionIdBatch: [String], metadataBatch: [{String:String}]) {
 
   let minter: &MatrixMarketplaceNFT.NFTMinter
   let creator: AuthAccount
