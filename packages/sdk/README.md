@@ -11,7 +11,7 @@
      * @param fcl:  import * as fcl from "@onflow/fcl"
      * @example  import * as fcl from "@onflow/fcl"; const client = new MatrixMarketplaceNFTClient();  client.bindFcl(fcl);
      */
-    public async bindFcl(fcl: any): Promise<void> 
+    public bindFcl(fcl: any): Promise<void> 
 
     /**
      * check address whether support this NFTsCollection or not
