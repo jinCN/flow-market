@@ -13,7 +13,7 @@ import * as t from "@onflow/types";
 export class MatrixMarketplaceNFTClient implements NFTClient {
     private fcl: any;
 
-    public async bindFcl(fcl: any): Promise<void> {
+    public bindFcl(fcl: any): Promise<void> {
         this.fcl = fcl;
     }
 
