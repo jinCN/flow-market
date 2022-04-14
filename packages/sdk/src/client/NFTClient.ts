@@ -2,6 +2,7 @@ import {MatrixMarketplaceNFT} from "./model";
 import {FlowEnv} from "./env";
 
 export interface NFTClient {
+    bindFcl(fcl: any): Promise<void>
     setupGlobalFcl(env: FlowEnv): Promise<void>;
     FUSDBalance(address: string): Promise<number>;
     FLOWBalance(address: string): Promise<number>;

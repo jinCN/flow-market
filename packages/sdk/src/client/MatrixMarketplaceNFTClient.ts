@@ -8,14 +8,19 @@ import {getFLOWBalanceScript} from "../cadence/get_flow_balance";
 import {getFUSDBalanceScript} from "../cadence/get_fusd_balance";
 import {mintNFTs} from "../cadence/mint_nfts";
 import {NFTClient} from "./NFTClient";
-import * as fcl from "@onflow/fcl";
 import * as t from "@onflow/types";
 
 export class MatrixMarketplaceNFTClient implements NFTClient {
+    private fcl: any;
+
+    public async bindFcl(fcl: any): Promise<void> {
+        this.fcl = fcl;
+    }
+
     public async setupGlobalFcl(env: FlowEnv): Promise<void> {
         switch (env) {
             case FlowEnv.flowTestnet: {
-                await fcl
+                await this.fcl
                     .config()
                     .put("accessNode.api", "https://access-testnet.onflow.org") // connect to Flow testnet
                     .put("challenge.handshake", "https://flow-wallet-testnet.blocto.app/authn") // use Blocto testnet wallet
@@ -27,7 +32,7 @@ export class MatrixMarketplaceNFTClient implements NFTClient {
                 break;
             }
             case FlowEnv.flowMainnet: {
-                await fcl
+                await this.fcl
                     .config()
                     .put("accessNode.api", "https://flow-access-mainnet.portto.io")
                     .put("challenge.handshake", "https://flow-wallet.blocto.app/authn") // use Blocto wallet
@@ -40,7 +45,7 @@ export class MatrixMarketplaceNFTClient implements NFTClient {
             }
             case FlowEnv.localEmulator:
             default:
-                await fcl
+                await this.fcl
                     .config()
                     .put("accessNode.api", "http://localhost:8080")
                     .put("discovery.wallet", "http://localhost:8701/fcl/authn")
@@ -54,15 +59,15 @@ export class MatrixMarketplaceNFTClient implements NFTClient {
 
     public async mintNFTs(nftAdminAddress: string, recipientBatch: string[], subCollectionIdBatch: string[], metadataBatch: Array<{[key:string]:string}>): Promise<string> {
         try {
-            const response = await fcl.send([
+            const response = await this.fcl.send([
                 mintNFTs,
-                fcl.args([fcl.arg(nftAdminAddress, t.Address), fcl.arg(recipientBatch, t.Array(t.Address)), fcl.arg(subCollectionIdBatch, t.Array(t.String)), fcl.arg(metadataBatch, t.Array(t.Dictionary({key: t.String, value: t.String})))]),
-                fcl.proposer(fcl.currentUser().authorization),
-                fcl.authorizations([fcl.currentUser().authorization]),
-                fcl.limit(1000),
-                fcl.payer(fcl.currentUser().authorization)
+                this.fcl.args([this.fcl.arg(nftAdminAddress, t.Address), this.fcl.arg(recipientBatch, t.Array(t.Address)), this.fcl.arg(subCollectionIdBatch, t.Array(t.String)), this.fcl.arg(metadataBatch, t.Array(t.Dictionary({key: t.String, value: t.String})))]),
+                this.fcl.proposer(this.fcl.currentUser().authorization),
+                this.fcl.authorizations([this.fcl.currentUser().authorization]),
+                this.fcl.limit(1000),
+                this.fcl.payer(this.fcl.currentUser().authorization)
             ]);
-            const ret = await fcl.tx(response).onceSealed();
+            const ret = await this.fcl.tx(response).onceSealed();
             if (ret.errorMessage !== "" && ret.status != 4) {
                 return Promise.reject(ret.errorMessage);
             }
@@ -75,12 +80,12 @@ export class MatrixMarketplaceNFTClient implements NFTClient {
 
     public async FLOWBalance(address: string): Promise<number> {
         try {
-            const response = await fcl.send([
+            const response = await this.fcl.send([
                 getFLOWBalanceScript,
-                fcl.args([fcl.arg(address, t.Address)]),
-                fcl.limit(1000)
+                this.fcl.args([this.fcl.arg(address, t.Address)]),
+                this.fcl.limit(1000)
             ]);
-            return fcl.decode(response);
+            return this.fcl.decode(response);
         } catch (error) {
             console.error(error);
             return Promise.reject("Something is wrong with fetching FLOW balance");
@@ -89,12 +94,12 @@ export class MatrixMarketplaceNFTClient implements NFTClient {
 
     public async FUSDBalance(address: string): Promise<number> {
         try {
-            const response = await fcl.send([
+            const response = await this.fcl.send([
                 getFUSDBalanceScript,
-                fcl.args([fcl.arg(address, t.Address)]),
-                fcl.limit(1000)
+                this.fcl.args([this.fcl.arg(address, t.Address)]),
+                this.fcl.limit(1000)
             ]);
-            return fcl.decode(response);
+            return this.fcl.decode(response);
         } catch (error) {
             console.error(error);
             return Promise.reject("Something is wrong with fetching FUSD balance");
@@ -103,12 +108,12 @@ export class MatrixMarketplaceNFTClient implements NFTClient {
 
     public async checkNFTsCollection(address: string): Promise<boolean> {
         try {
-            const response = await fcl.send([
+            const response = await this.fcl.send([
                 checkNFTsCollection,
-                fcl.args([fcl.arg(address, t.Address)]),
-                fcl.limit(1000)
+                this.fcl.args([this.fcl.arg(address, t.Address)]),
+                this.fcl.limit(1000)
             ]);
-            return fcl.decode(response);
+            return this.fcl.decode(response);
         } catch (error) {
             console.error(error);
             return Promise.reject(error);
@@ -117,9 +122,9 @@ export class MatrixMarketplaceNFTClient implements NFTClient {
 
     public async getNFTs(account: string): Promise<MatrixMarketplaceNFT[]> {
         try {
-            const response = await fcl.send([getNFTsScript, fcl.args([fcl.arg(account, t.Address)]), fcl.limit(2000)]);
+            const response = await this.fcl.send([getNFTsScript, this.fcl.args([this.fcl.arg(account, t.Address)]), this.fcl.limit(2000)]);
             console.log(response);
-            return fcl.decode(response);
+            return this.fcl.decode(response);
         } catch (error) {
             console.error(error);
             return Promise.reject(error);
@@ -128,14 +133,14 @@ export class MatrixMarketplaceNFTClient implements NFTClient {
 
     public async initNFTCollection(): Promise<string> {
         try {
-            const response = await fcl.send([
+            const response = await this.fcl.send([
                 initNFTCollection,
-                fcl.proposer(fcl.currentUser().authorization),
-                fcl.authorizations([fcl.currentUser().authorization]),
-                fcl.limit(1000),
-                fcl.payer(fcl.currentUser().authorization)
+                this.fcl.proposer(this.fcl.currentUser().authorization),
+                this.fcl.authorizations([this.fcl.currentUser().authorization]),
+                this.fcl.limit(1000),
+                this.fcl.payer(this.fcl.currentUser().authorization)
             ]);
-            const ret = await fcl.tx(response).onceSealed();
+            const ret = await this.fcl.tx(response).onceSealed();
             if (ret.errorMessage !== "" && ret.status != 4) {
                 return Promise.reject(ret.errorMessage);
             }
