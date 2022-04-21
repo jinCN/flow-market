@@ -8,6 +8,6 @@ export interface NFTClient {
     FLOWBalance(address: string): Promise<number>;
     checkNFTsCollection(address: string): Promise<boolean>;
     initNFTCollection(): Promise<string>;
-    getNFTs(account: string): Promise<MatrixMarketplaceNFT[]>;
-    mintNFTs(nftAdminAddress: string, recipientBatch: [string], subCollectionIdBatch: [string], metadataBatch:  [{key:string , value:string}]): Promise<string>;
+    getNFTs(account: string): Promise<number[]>;
+    mintNFTs(nftAdminAddress: string, recipientBatch: [string], subCollectionIdBatch: [string], metadataBatch: Array<Array<{key:string, value:string}>>): Promise<string>;
 }
