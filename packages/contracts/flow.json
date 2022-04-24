@@ -61,13 +61,18 @@
     "testnet-account2": {
       "address": "0xa56c5e5fd9b9ca22",
       "key": "7a437e23da24e7772896c556262fafa58af9fde12890be5f33509c8ce8b94e64"
+    },
+    "testnet-account3": {
+      "address": "0xeca46256a90fc4ae",
+      "key": "7a437e23da24e7772896c556262fafa58af9fde12890be5f33509c8ce8b94e64"
     }
   },
   "deployments": {
     "emulator": {
       "emulator-account": [
-        "NFTStorefront",
+        "NonFungibleToken",
         "MatrixMarketplaceOpenBid",
+        "NFTStorefront",
         "MetadataViews",
         "MatrixMarketplaceNFT"
       ]
@@ -75,6 +80,7 @@
     "testnet": {
       "testnet-account": [
         "NFTStorefront",
+        "MatrixMarketplaceOpenBid",
         "MatrixMarketplaceNFT",
         "MetadataViews"
       ]
