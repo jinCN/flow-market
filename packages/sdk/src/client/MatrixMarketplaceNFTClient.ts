@@ -7,17 +7,17 @@ import {initNFTCollection} from "../cadence/init_nfts_collection";
 import {getFLOWBalanceScript} from "../cadence/get_flow_balance";
 import {getFUSDBalanceScript} from "../cadence/get_fusd_balance";
 import {mintNFTs} from "../cadence/mint_nfts";
-import {NFTClient} from "./NFTClient";
+import {IBindConfigs, NFTClient} from "./NFTClient";
 import * as t from "@onflow/types";
 
 export class MatrixMarketplaceNFTClient implements NFTClient {
     private fcl: any;
 
-    public bindFcl(fcl: any): Promise<void> {
-        this.fcl = fcl;
-    }
+    private env: FlowEnv | undefined;
 
-    public async setupGlobalFcl(env: FlowEnv): Promise<void> {
+    public async bindFcl(fcl: any, env: FlowEnv, config?: IBindConfigs): Promise<void> {
+        this.env = env;
+        this.fcl = fcl;
         switch (env) {
             case FlowEnv.flowTestnet: {
                 await this.fcl
@@ -54,6 +54,36 @@ export class MatrixMarketplaceNFTClient implements NFTClient {
                     .put("0xFLOW_TOKEN_ADDRESS", "0x0ae53cb6e3f42a79")
                     .put("0xNFT_ADDRESS", "0xf8d6e0586b0a20c7")
                     .put("0xNON_FUNGIBLE_TOKEN_ADDRESS", "0xf8d6e0586b0a20c7");
+        }
+    }
+
+    /** Setup FCL instance
+     *
+     * @async
+     * @param {key} - example:"0xNFT_ADDRESS"
+     * @param {value} - example:"0x7f3812b53dd4de20"
+     * @returns {Promise<void>}
+     */
+    public async setupFcl(key: string, value: string): Promise<void> {
+        switch (this.env) {
+            case FlowEnv.flowTestnet: {
+                await this.fcl
+                    .config()
+                    .put(key, value);
+                break;
+            }
+            case FlowEnv.flowTestnet: {
+                await this.fcl
+                    .config()
+                    .put(key, value);
+                break;
+            }
+            case FlowEnv.flowTestnet: {
+                await this.fcl
+                    .config()
+                    .put(key, value);
+                break;
+            }
         }
     }
 
