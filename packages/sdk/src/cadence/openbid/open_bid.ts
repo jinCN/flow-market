@@ -1,8 +1,11 @@
-import FungibleToken from "../../contracts/lib/FungibleToken.cdc"
-import NonFungibleToken from "../../contracts/lib/NonFungibleToken.cdc"
-import MatrixMarketplaceOpenBid from "../../contracts/MatrixMarketplaceOpenBid.cdc"
-import FlowToken from "../../contracts/lib/FlowToken.cdc"
-import MatrixMarketplaceNFT from "../../contracts/MatrixMarketplaceNFT.cdc"
+import * as fcl from "@onflow/fcl";
+
+export const openBid: string = fcl.transaction`
+import NonFungibleToken from 0xNON_FUNGIBLE_TOKEN_ADDRESS
+import MatrixMarketplaceNFT from 0xNFT_ADDRESS
+import FungibleToken from 0xFUNGIBLE_TOKEN_ADDRESS
+import FlowToken from 0xFLOW_TOKEN_ADDRESS
+import MatrixMarketplaceOpenBid from 0xOPENBID_ADDRESS
 
 transaction(nftId: UInt64, amount: UFix64) {
     let nftReceiver: Capability<&{NonFungibleToken.CollectionPublic}>
@@ -40,4 +43,4 @@ transaction(nftId: UInt64, amount: UFix64) {
             cuts: []
         )
     }
-}
+}`;
