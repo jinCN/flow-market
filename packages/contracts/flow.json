@@ -72,7 +72,6 @@
       "emulator-account": [
         "NonFungibleToken",
         "MatrixMarketplaceOpenBid",
-        "NFTStorefront",
         "MetadataViews",
         "MatrixMarketplaceNFT"
       ]
@@ -87,4 +86,3 @@
     }
   }
 }
- 
