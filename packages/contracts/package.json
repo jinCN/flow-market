@@ -11,7 +11,7 @@
     "lint:fix": "echo todo",
     "format": "echo todo",
     "format:fix": "echo todo",
-    "test": "echo todo",
+    "test": "mocha",
     "test:cov": "echo todo"
   },
   "devDependencies": {

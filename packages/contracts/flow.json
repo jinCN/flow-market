@@ -35,9 +35,9 @@
       }
     },
     "MetadataViews": "./cadence/contracts/lib/MetadataViews.cdc",
-    "NFTStorefront":"./cadence/contracts/lib/NFTStorefront.cdc",
     "MatrixMarketplaceNFT": "./cadence/contracts/MatrixMarketplaceNFT.cdc",
-    "MatrixMarketplaceOpenBid": "./cadence/contracts/MatrixMarketplaceOpenBid.cdc"
+    "MatrixMarketplaceOpenBid": "./cadence/contracts/MatrixMarketplaceOpenBid.cdc",
+    "MatrixMarketplaceEnglishAuction": "./cadence/contracts/MatrixMarketplaceEnglishAuction.cdc"
   },
   "networks": {
     "emulator": "127.0.0.1:3569",
@@ -78,7 +78,6 @@
     },
     "testnet": {
       "testnet-account": [
-        "NFTStorefront",
         "MatrixMarketplaceOpenBid",
         "MatrixMarketplaceNFT",
         "MetadataViews"
@@ -86,3 +85,4 @@
     }
   }
 }
+ 
