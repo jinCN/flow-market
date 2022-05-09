@@ -7,16 +7,17 @@ import NonFungibleToken from "../contracts/lib/NonFungibleToken.cdc"
 // This transaction adds an empty Vault to account 0x02
 // and mints an NFT with id=1 that is deposited into
 // the NFT collection on account 0x01.
-transaction(recipientBatch: [Address], subCollectionIdBatch: [String], metadataBatch: [{String: String}]) {
+transaction(nftAdminAddress: Address, recipientBatch: [Address], subCollectionIdBatch: [String], metadataBatch: [{String: String}]) {
 
   let minter: &MatrixMarketplaceNFT.NFTMinter
   let creator: AuthAccount
 
   prepare(acct: AuthAccount) {
-    self.minter = acct.borrow<&MatrixMarketplaceNFT.NFTMinter>(from: MatrixMarketplaceNFT.MinterPublicPath)
-        ?? panic("Could not borrow owner's NFT minter reference")
-    self.creator = acct;
-  }
+      self.minter = getAccount(nftAdminAddress).getCapability(MatrixMarketplaceNFT.MinterPublicPath)
+                                    .borrow<&MatrixMarketplaceNFT.NFTMinter>()
+                                    ?? panic("Could not borrow minter capability from public collection")
+      self.creator = acct;
+    }
 
   execute {
     var size = recipientBatch.length

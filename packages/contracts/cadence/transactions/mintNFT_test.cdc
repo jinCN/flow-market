@@ -1,18 +1,17 @@
-import NonFungibleToken from "../contracts/lib/NonFungibleToken.cdc"
-import MatrixMarketplaceNFT from "../contracts/MatrixMarketplaceNFT.cdc"
+import NonFungibleToken from 0xf8d6e0586b0a20c7
+import MatrixMarketplaceNFT from 0xf8d6e0586b0a20c7
 
 // Mint MatrixWorldAssetsNFT token to recipient acct
-transaction(recipientBatch: [Address]) {
+transaction(nftAdminAddress: Address, recipientBatch: [Address]) {
     let minter: &MatrixMarketplaceNFT.NFTMinter
     let creator: AuthAccount
 
     prepare(acct: AuthAccount) {
-
-        self.minter = getAccount(0x7f3812b53dd4de20).getCapability(MatrixMarketplaceNFT.MinterPublicPath)
-                                  .borrow<&MatrixMarketplaceNFT.NFTMinter>()
-                                  ?? panic("Could not borrow minter capability from public collection")
+        self.minter = getAccount(nftAdminAddress).getCapability(MatrixMarketplaceNFT.MinterPublicPath)
+                                      .borrow<&MatrixMarketplaceNFT.NFTMinter>()
+                                      ?? panic("Could not borrow minter capability from public collection")
         self.creator = acct;
-    }
+      }
 
     execute {
         var size = recipientBatch.length

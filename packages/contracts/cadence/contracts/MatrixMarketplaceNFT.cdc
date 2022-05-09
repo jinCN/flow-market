@@ -202,7 +202,7 @@ pub contract MatrixMarketplaceNFT : NonFungibleToken {
         self.account.save(<-collection, to: self.CollectionStoragePath)
 
         // create a public capability for the collection
-        self.account.link<&MatrixMarketplaceNFT.Collection{NonFungibleToken.Provider, NonFungibleToken.CollectionPublic, MatrixMarketplaceNFT.MatrixMarketplaceNFTCollectionPublic}>(
+        self.account.link<&MatrixMarketplaceNFT.Collection{NonFungibleToken.Receiver, NonFungibleToken.Provider, NonFungibleToken.CollectionPublic, MatrixMarketplaceNFT.MatrixMarketplaceNFTCollectionPublic}>(
             self.CollectionPublicPath,
             target: self.CollectionStoragePath
         )

@@ -15,8 +15,8 @@
     "FungibleToken": {
       "source": "./cadence/contracts/lib/FungibleToken.cdc",
       "aliases": {
-        "testnet": "9a0766d93b6608b7",
-        "emulator": "ee82856bf20e2aa6"
+        "emulator": "ee82856bf20e2aa6",
+        "testnet": "9a0766d93b6608b7"
       }
     },
     "FlowToken": {
@@ -47,7 +47,7 @@
   "accounts": {
     "emulator-account2": {
       "address": "01cf0e2f2f715450",
-      "key": "2eae2f31cb5b756151fa11d82949c634b8f28796a711d7eb1e52cc301ed11111",
+      "key": "e00e33ee30228635894dab4640fd7aa4fd4e8b3218315c3042f73e1ad234acbb",
       "chain": "flow-emulator"
     },
     "emulator-account": {
