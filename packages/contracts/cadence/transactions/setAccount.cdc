@@ -1,8 +1,9 @@
 // SetupAccount1Transaction.cdc
-import FungibleToken from 0xee82856bf20e2aa6
-import NonFungibleToken from 0xf8d6e0586b0a20c7
-import FlowToken from 0x0ae53cb6e3f42a79
-import MatrixMarketplaceNFT from 0xf8d6e0586b0a20c7
+
+import FungibleToken from "../contracts/lib/FungibleToken.cdc"
+import FlowToken from "../contracts/lib/FlowToken.cdc"
+import NonFungibleToken from "../contracts/lib/NonFungibleToken.cdc"
+import MatrixMarketplaceNFT from "../contracts/MatrixMarketplaceNFT.cdc"
 // This transaction sets up account 0x01 for the marketplace tutorial
 // by publishing a Vault reference and creating an empty NFT Collection.
 transaction {

@@ -1,6 +1,5 @@
-import NonFungibleToken from 0xf8d6e0586b0a20c7
-import MatrixMarketplaceNFT from 0xf8d6e0586b0a20c7
-
+import NonFungibleToken from "../contracts/lib/NonFungibleToken.cdc"
+import MatrixMarketplaceNFT from "../contracts/MatrixMarketplaceNFT.cdc"
 pub fun main(address: Address): [UInt64]{
     let collection = getAccount(address)
             .getCapability(MatrixMarketplaceNFT.CollectionPublicPath)

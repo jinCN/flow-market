@@ -1,8 +1,8 @@
-import FungibleToken from 0xee82856bf20e2aa6
-import NonFungibleToken from 0xf8d6e0586b0a20c7
-import MatrixMarketplaceOpenBid from 0xf8d6e0586b0a20c7
-import FlowToken from 0x0ae53cb6e3f42a79
-import MatrixMarketplaceNFT from 0xf8d6e0586b0a20c7
+import FungibleToken from "../../contracts/lib/FungibleToken.cdc"
+import NonFungibleToken from "../../contracts/lib/NonFungibleToken.cdc"
+import MatrixMarketplaceOpenBid from "../../contracts/MatrixMarketplaceOpenBid.cdc"
+import FlowToken from "../../contracts/lib/FlowToken.cdc"
+import MatrixMarketplaceNFT from "../../contracts/MatrixMarketplaceNFT.cdc"
 
 transaction(nftId: UInt64, amount: UFix64, royaltyReceivers: [Address], royaltyAmount: [UFix64]) {
     let nftReceiver: Capability<&{NonFungibleToken.CollectionPublic}>

@@ -1,5 +1,5 @@
-import NonFungibleToken from 0xf8d6e0586b0a20c7
-import MatrixMarketplaceNFT from 0xf8d6e0586b0a20c7
+import NonFungibleToken from "../contracts/lib/NonFungibleToken.cdc"
+import MatrixMarketplaceNFT from "../contracts/MatrixMarketplaceNFT.cdc"
 
 // Mint MatrixWorldAssetsNFT token to recipient acct
 transaction(nftAdminAddress: Address, recipientBatch: [Address]) {
