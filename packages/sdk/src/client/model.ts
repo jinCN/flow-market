@@ -1,4 +1,4 @@
-export interface MatrixMarketplaceNFT {
+export interface MatrixMarket {
     name: string;
     description: string;
     image: string;

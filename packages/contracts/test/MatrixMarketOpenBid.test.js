@@ -3,7 +3,7 @@ const testConsole = require('test-console')
 
 const helper = require('./utils/helper')
 
-describe('MatrixMarketplaceOpenBid basic test', function () {
+describe('MatrixMarketOpenBid basic test', function () {
   this.timeout(60000)
   let Admin = '0xf8d6e0586b0a20c7'
   let AddressA = '0x01cf0e2f2f715450'
@@ -93,7 +93,7 @@ describe('MatrixMarketplaceOpenBid basic test', function () {
     var openbidId = Number(retLog.replace('Result: [', '').replace(']', ''))
     await helper.exec('flow scripts execute cadence/scripts/bid/read_bid_details.cdc ' + AddressA + ' ' + openbidId)
     checkNoLog('❌', false)
-    checkLog(`Result: A.f8d6e0586b0a20c7.MatrixMarketplaceOpenBid.BidDetails(bidId: `)
+    checkLog(`Result: A.f8d6e0586b0a20c7.MatrixMarketOpenBid.BidDetails(bidId: `)
   })
 
   it('accept bid transaction', async () => {

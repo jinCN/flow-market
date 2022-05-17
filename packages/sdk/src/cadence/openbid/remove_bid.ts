@@ -1,14 +1,14 @@
 import * as fcl from "@onflow/fcl";
 
 export const removeOpenBid: string = fcl.transaction`
-import MatrixMarketplaceOpenBid from 0xOPENBID_ADDRESS
+import MatrixMarketOpenBid from 0xOPENBID_ADDRESS
 
 transaction(bidId: UInt64) {
-    let openBid: &MatrixMarketplaceOpenBid.OpenBid{MatrixMarketplaceOpenBid.OpenBidManager}
+    let openBid: &MatrixMarketOpenBid.OpenBid{MatrixMarketOpenBid.OpenBidManager}
 
     prepare(acct: AuthAccount) {
-        self.openBid = acct.borrow<&MatrixMarketplaceOpenBid.OpenBid{MatrixMarketplaceOpenBid.OpenBidManager}>(from: MatrixMarketplaceOpenBid.OpenBidStoragePath)
-            ?? panic("Missing or mis-typed MatrixMarketplaceOpenBid.OpenBid")
+        self.openBid = acct.borrow<&MatrixMarketOpenBid.OpenBid{MatrixMarketOpenBid.OpenBidManager}>(from: MatrixMarketOpenBid.OpenBidStoragePath)
+            ?? panic("Missing or mis-typed MatrixMarketOpenBid.OpenBid")
     }
 
     execute {

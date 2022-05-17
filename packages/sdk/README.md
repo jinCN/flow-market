@@ -9,7 +9,7 @@
      *
      * @async
      * @param fcl:  import * as fcl from "@onflow/fcl"
-     * @example  import * as fcl from "@onflow/fcl"; const client = new MatrixMarketplaceNFTClient();  client.bindFcl(fcl);
+     * @example  import * as fcl from "@onflow/fcl"; const client = new MatrixMarketClient();  client.bindFcl(fcl);
      */
     public bindFcl(fcl: any): Promise<void> 
 
@@ -36,10 +36,10 @@
      *
      * @async
      * @param {string} address
-     * @returns {Promise<MatrixMarketPlaceNFT[]>} transaction id
+     * @returns {Promise<MatrixMarket[]>} transaction id
      * @example ret = await client.getNFTs("0x01cf0e2f2f715450");
      */
-    public async getNFTs(account: string): Promise<MatrixMarketPlaceNFT[]> 
+    public async getNFTs(account: string): Promise<MatrixMarket[]> 
 
     /**
      * mintNFTsBatch

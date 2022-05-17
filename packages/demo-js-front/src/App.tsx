@@ -3,11 +3,11 @@ import "./App.css";
 import {
     fcl,
     FlowEnv,
-    MatrixMarketplaceNFTClient,
-    MatrixMarketplaceOpenBidClient
+    MatrixMarketClient,
+    MatrixMarketOpenBidClient
 } from "@matrix-labs/matrix-marketplace-nft-sdk"
-const openBidClient = new MatrixMarketplaceOpenBidClient();
-const nftClient = new MatrixMarketplaceNFTClient();
+const openBidClient = new MatrixMarketOpenBidClient();
+const nftClient = new MatrixMarketClient();
 
 const network = process.env.REACT_APP_NETWORK;
 function App() {

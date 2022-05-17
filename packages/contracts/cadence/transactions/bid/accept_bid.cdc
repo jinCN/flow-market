@@ -1,19 +1,19 @@
 import FungibleToken from "../../contracts/lib/FungibleToken.cdc"
 import NonFungibleToken from "../../contracts/lib/NonFungibleToken.cdc"
 import FlowToken from "../../contracts/lib/FlowToken.cdc"
-import MatrixMarketplaceNFT from "../../contracts/MatrixMarketplaceNFT.cdc"
-import MatrixMarketplaceOpenBid from "../../contracts/MatrixMarketplaceOpenBid.cdc"
+import MatrixMarket from "../../contracts/MatrixMarket.cdc"
+import MatrixMarketOpenBid from "../../contracts/MatrixMarketOpenBid.cdc"
 
 transaction(bidId: UInt64, openBidAddress: Address) {
     let nft: @NonFungibleToken.NFT
     let mainVault: &FlowToken.Vault{FungibleToken.Receiver}
-    let openBid: &MatrixMarketplaceOpenBid.OpenBid{MatrixMarketplaceOpenBid.OpenBidPublic}
-    let bid: &MatrixMarketplaceOpenBid.Bid{MatrixMarketplaceOpenBid.BidPublic}
+    let openBid: &MatrixMarketOpenBid.OpenBid{MatrixMarketOpenBid.OpenBidPublic}
+    let bid: &MatrixMarketOpenBid.Bid{MatrixMarketOpenBid.BidPublic}
 
     prepare(acct: AuthAccount) {
         self.openBid = getAccount(openBidAddress)
-            .getCapability<&MatrixMarketplaceOpenBid.OpenBid{MatrixMarketplaceOpenBid.OpenBidPublic}>(
-                MatrixMarketplaceOpenBid.OpenBidPublicPath
+            .getCapability<&MatrixMarketOpenBid.OpenBid{MatrixMarketOpenBid.OpenBidPublic}>(
+                MatrixMarketOpenBid.OpenBidPublicPath
             )!
             .borrow()
             ?? panic("Could not borrow OpenBid from provided address")
@@ -22,8 +22,8 @@ transaction(bidId: UInt64, openBidAddress: Address) {
                     ?? panic("No Offer with that ID in OpenBid")
         let nftId = self.bid.getDetails().nftId
 
-        let nftCollection = acct.borrow<&MatrixMarketplaceNFT.Collection>(
-            from: MatrixMarketplaceNFT.CollectionStoragePath
+        let nftCollection = acct.borrow<&MatrixMarket.Collection>(
+            from: MatrixMarket.CollectionStoragePath
         ) ?? panic("Cannot borrow NFT collection receiver from account")
         self.nft <- nftCollection.withdraw(withdrawID: nftId)
 

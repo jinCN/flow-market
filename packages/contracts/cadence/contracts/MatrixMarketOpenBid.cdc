@@ -1,12 +1,12 @@
 import FungibleToken from "./lib/FungibleToken.cdc"
 import NonFungibleToken from "./lib/NonFungibleToken.cdc"
 
-pub contract MatrixMarketplaceOpenBid {
+pub contract MatrixMarketOpenBid {
 
     // initialize StoragePath and OpenBidPublicPath
-    pub event MatrixMarketPlaceOpenBidInitialized()
+    pub event MatrixMarketOpenBidInitialized()
 
-    // MatrixMarketPlaceOpenBid initialized
+    // MatrixMarketOpenBid initialized
     pub event OpenBidInitialized(OpenBidResourceId: UInt64)
 
     pub event OpenBidDestroyed(OpenBidResourceId: UInt64)
@@ -262,9 +262,9 @@ pub contract MatrixMarketplaceOpenBid {
     pub let OpenBidPublicPath: PublicPath
 
     init () {
-        self.OpenBidStoragePath = /storage/MatrixMarketPlaceOpenBid
-        self.OpenBidPublicPath = /public/MatrixMarketPlaceOpenBid
+        self.OpenBidStoragePath = /storage/MatrixMarketOpenBid
+        self.OpenBidPublicPath = /public/MatrixMarketOpenBid
 
-        emit MatrixMarketPlaceOpenBidInitialized()
+        emit MatrixMarketOpenBidInitialized()
     }
 }

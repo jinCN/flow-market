@@ -1,17 +1,16 @@
-import {MatrixMarketplaceNFT} from "./model";
+import {MatrixMarket} from "./model";
 import {FlowEnv} from "./env";
 
-import {acceptBid} from "../cadence/openbid/accept_bid";
-import {initOpenBid} from "../cadence/openbid/init_openbid";
-import {openBid} from "../cadence/openbid/open_bid";
-import {getBidDetails} from "../cadence/openbid/read_bid_details";
-import {getBidIds} from "../cadence/openbid/read_openbid_ids";
-import {removeOpenBid} from "../cadence/openbid/remove_bid";
-import {IBindConfigs, OpenBidClient} from "./interfaces/OpenBidClient";
+import {checkNFTsCollection} from "../cadence/check_nfts_collection";
+import {getNFTsScript} from "../cadence/get_nfts";
+import {initNFTCollection} from "../cadence/init_nfts_collection";
+import {getFLOWBalanceScript} from "../cadence/get_flow_balance";
+import {getFUSDBalanceScript} from "../cadence/get_fusd_balance";
+import {mintNFTs} from "../cadence/mint_nfts";
+import {IBindConfigs, NFTClient} from "./interfaces/NFTClient";
 import * as t from "@onflow/types";
 
-export class MatrixMarketplaceOpenBidClient implements OpenBidClient {
-
+export class MatrixMarketClient implements NFTClient {
     private fcl: any;
 
     private env: FlowEnv | undefined;
@@ -29,7 +28,6 @@ export class MatrixMarketplaceOpenBidClient implements OpenBidClient {
                     .put("0xFUSD_ADDRESS", "0xe223d8a629e49c68")
                     .put("0xFLOW_TOKEN_ADDRESS", "0x7e60df042a9c0868")
                     .put("0xNFT_ADDRESS", "0x7f3812b53dd4de20")
-                    .put("0xOPENBID_ADDRESS", "0x7f3812b53dd4de20")
                     .put("0xNON_FUNGIBLE_TOKEN_ADDRESS", "0x631e88ae7f1d7c20");
                 break;
             }
@@ -42,7 +40,6 @@ export class MatrixMarketplaceOpenBidClient implements OpenBidClient {
                     .put("0xFUSD_ADDRESS", "0x3c5959b568896393")
                     .put("0xFLOW_TOKEN_ADDRESS", "0x1654653399040a61")
                     .put("0xNFT_ADDRESS", "")
-                    .put("0xOPENBID_ADDRESS", "0x7f3812b53dd4de20")
                     .put("0xNON_FUNGIBLE_TOKEN_ADDRESS", "0x1d7e57aa55817448");
                 break;
             }
@@ -56,7 +53,6 @@ export class MatrixMarketplaceOpenBidClient implements OpenBidClient {
                     .put("0xFUSD_ADDRESS", "0xf8d6e0586b0a20c7")
                     .put("0xFLOW_TOKEN_ADDRESS", "0x0ae53cb6e3f42a79")
                     .put("0xNFT_ADDRESS", "0xf8d6e0586b0a20c7")
-                    .put("0xOPENBID_ADDRESS", "0xf8d6e0586b0a20c7")
                     .put("0xNON_FUNGIBLE_TOKEN_ADDRESS", "0xf8d6e0586b0a20c7");
         }
     }
@@ -91,14 +87,14 @@ export class MatrixMarketplaceOpenBidClient implements OpenBidClient {
         }
     }
 
-    public async acceptBid(bidResourceId: number, openBidAddress: string): Promise<number> {
+    public async mintNFTs(nftAdminAddress: string, recipientBatch: string[], subCollectionIdBatch: string[], metadataBatch: Array<{[key:string]:string}>): Promise<string> {
         try {
             const response = await this.fcl.send([
-                acceptBid,
-                this.fcl.args([this.fcl.arg(bidResourceId, t.UInt64), this.fcl.arg(openBidAddress, t.Address)]),
+                mintNFTs,
+                this.fcl.args([this.fcl.arg(nftAdminAddress, t.Address), this.fcl.arg(recipientBatch, t.Array(t.Address)), this.fcl.arg(subCollectionIdBatch, t.Array(t.String)), this.fcl.arg(metadataBatch, t.Array(t.Dictionary({key: t.String, value: t.String})))]),
                 this.fcl.proposer(this.fcl.currentUser().authorization),
                 this.fcl.authorizations([this.fcl.currentUser().authorization]),
-                this.fcl.limit(2000),
+                this.fcl.limit(1000),
                 this.fcl.payer(this.fcl.currentUser().authorization)
             ]);
             const ret = await this.fcl.tx(response).onceSealed();
@@ -112,71 +108,51 @@ export class MatrixMarketplaceOpenBidClient implements OpenBidClient {
         }
     }
 
-    public async initOpenBid(): Promise<number> {
+    public async FLOWBalance(address: string): Promise<number> {
         try {
             const response = await this.fcl.send([
-                initOpenBid,
-                this.fcl.proposer(this.fcl.currentUser().authorization),
-                this.fcl.authorizations([this.fcl.currentUser().authorization]),
-                this.fcl.limit(2000),
-                this.fcl.payer(this.fcl.currentUser().authorization)
+                getFLOWBalanceScript,
+                this.fcl.args([this.fcl.arg(address, t.Address)]),
+                this.fcl.limit(1000)
             ]);
-            const ret = await this.fcl.tx(response).onceSealed();
-            if (ret.errorMessage !== "" && ret.status != 4) {
-                return Promise.reject(ret.errorMessage);
-            }
-            return response.transactionId;
+            return this.fcl.decode(response);
+        } catch (error) {
+            console.error(error);
+            return Promise.reject("Something is wrong with fetching FLOW balance");
+        }
+    }
+
+    public async FUSDBalance(address: string): Promise<number> {
+        try {
+            const response = await this.fcl.send([
+                getFUSDBalanceScript,
+                this.fcl.args([this.fcl.arg(address, t.Address)]),
+                this.fcl.limit(1000)
+            ]);
+            return this.fcl.decode(response);
+        } catch (error) {
+            console.error(error);
+            return Promise.reject("Something is wrong with fetching FUSD balance");
+        }
+    }
+
+    public async checkNFTsCollection(address: string): Promise<boolean> {
+        try {
+            const response = await this.fcl.send([
+                checkNFTsCollection,
+                this.fcl.args([this.fcl.arg(address, t.Address)]),
+                this.fcl.limit(1000)
+            ]);
+            return this.fcl.decode(response);
         } catch (error) {
             console.error(error);
             return Promise.reject(error);
         }
     }
 
-    public async openBid(nftId: number, amount: string): Promise<boolean> {
+    public async getNFTs(account: string): Promise<MatrixMarket[]> {
         try {
-            const response = await this.fcl.send([
-                openBid,
-                this.fcl.args([this.fcl.arg(nftId, t.UInt64), this.fcl.arg(amount, t.UFix64)]),
-                this.fcl.proposer(this.fcl.currentUser().authorization),
-                this.fcl.authorizations([this.fcl.currentUser().authorization]),
-                this.fcl.limit(2000),
-                this.fcl.payer(this.fcl.currentUser().authorization)
-            ]);
-            const ret = await this.fcl.tx(response).onceSealed();
-            if (ret.errorMessage !== "" && ret.status != 4) {
-                return Promise.reject(ret.errorMessage);
-            }
-            return response.transactionId;
-        } catch (error) {
-            console.error(error);
-            return Promise.reject(error);
-        }
-    }
-
-    public async removeBid(bidResourceId: number): Promise<string> {
-        try {
-            const response = await this.fcl.send([
-                removeOpenBid,
-                this.fcl.args([this.fcl.arg(bidResourceId, t.UInt64)]),
-                this.fcl.proposer(this.fcl.currentUser().authorization),
-                this.fcl.authorizations([this.fcl.currentUser().authorization]),
-                this.fcl.limit(2000),
-                this.fcl.payer(this.fcl.currentUser().authorization)
-            ]);
-            const ret = await this.fcl.tx(response).onceSealed();
-            if (ret.errorMessage !== "" && ret.status != 4) {
-                return Promise.reject(ret.errorMessage);
-            }
-            return response.transactionId;
-        } catch (error) {
-            console.error(error);
-            return Promise.reject(error);
-        }
-    }
-
-    public async getBidIds(account: string): Promise<number[]> {
-        try {
-            const response = await this.fcl.send([getBidIds, this.fcl.args([this.fcl.arg(account, t.Address)]), this.fcl.limit(2000)]);
+            const response = await this.fcl.send([getNFTsScript, this.fcl.args([this.fcl.arg(account, t.Address)]), this.fcl.limit(2000)]);
             console.log(response);
             return this.fcl.decode(response);
         } catch (error) {
@@ -185,16 +161,23 @@ export class MatrixMarketplaceOpenBidClient implements OpenBidClient {
         }
     }
 
-    public async getBidDetails(account: string, bidResourceId: number): Promise<string> {
+    public async initNFTCollection(): Promise<string> {
         try {
-            const response = await this.fcl.send([getBidDetails, this.fcl.args([this.fcl.arg(account, t.Address), this.fcl.arg(bidResourceId, t.UInt64)]), this.fcl.limit(2000)]);
-            console.log(response);
-            return this.fcl.decode(response);
+            const response = await this.fcl.send([
+                initNFTCollection,
+                this.fcl.proposer(this.fcl.currentUser().authorization),
+                this.fcl.authorizations([this.fcl.currentUser().authorization]),
+                this.fcl.limit(1000),
+                this.fcl.payer(this.fcl.currentUser().authorization)
+            ]);
+            const ret = await this.fcl.tx(response).onceSealed();
+            if (ret.errorMessage !== "" && ret.status != 4) {
+                return Promise.reject(ret.errorMessage);
+            }
+            return response.transactionId;
         } catch (error) {
             console.error(error);
             return Promise.reject(error);
         }
     }
-
-
 }

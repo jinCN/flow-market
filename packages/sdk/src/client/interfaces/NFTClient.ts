@@ -1,4 +1,4 @@
-import {MatrixMarketplaceNFT} from "../model";
+import {MatrixMarket} from "../model";
 import {FlowEnv} from "../env";
 
 export interface IBindConfigs {
@@ -15,6 +15,6 @@ export interface NFTClient {
     FLOWBalance(address: string): Promise<number>;
     checkNFTsCollection(address: string): Promise<boolean>;
     initNFTCollection(): Promise<string>;
-    getNFTs(account: string): Promise<MatrixMarketplaceNFT[]>;
+    getNFTs(account: string): Promise<MatrixMarket[]>;
     mintNFTs(nftAdminAddress: string, recipientBatch: [string], subCollectionIdBatch: [string], metadataBatch:  [{key:string , value:string}]): Promise<string>;
 }

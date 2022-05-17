@@ -1,11 +1,11 @@
-import MatrixMarketplaceOpenBid from "../../contracts/MatrixMarketplaceOpenBid.cdc"
+import MatrixMarketOpenBid from "../../contracts/MatrixMarketOpenBid.cdc"
 
 // This script returns the details for a Bid within a OpenBid
 
-pub fun main(acct: Address, BidResourceId: UInt64): MatrixMarketplaceOpenBid.BidDetails {
+pub fun main(acct: Address, BidResourceId: UInt64): MatrixMarketOpenBid.BidDetails {
     let OpenBidRef = getAccount(acct)
-        .getCapability<&MatrixMarketplaceOpenBid.OpenBid{MatrixMarketplaceOpenBid.OpenBidPublic}>(
-            MatrixMarketplaceOpenBid.OpenBidPublicPath
+        .getCapability<&MatrixMarketOpenBid.OpenBid{MatrixMarketOpenBid.OpenBidPublic}>(
+            MatrixMarketOpenBid.OpenBidPublicPath
         )
         .borrow()
         ?? panic("Could not borrow public OpenBid from address")

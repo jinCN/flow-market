@@ -1,8 +1,8 @@
 import NonFungibleToken from "./lib/NonFungibleToken.cdc"
 import MetadataViews from "./lib/MetadataViews.cdc"
 
-// MatrixMarketPlaceNFT token contract
-pub contract MatrixMarketplaceNFT : NonFungibleToken {
+// MatrixMarket token contract
+pub contract MatrixMarket : NonFungibleToken {
 
     pub var totalSupply: UInt64
 
@@ -70,11 +70,11 @@ pub contract MatrixMarketplaceNFT : NonFungibleToken {
         }
     }
 
-    pub resource interface MatrixMarketplaceNFTCollectionPublic {
+    pub resource interface MatrixMarketCollectionPublic {
         pub fun deposit(token: @NonFungibleToken.NFT)
         pub fun getIDs(): [UInt64]
         pub fun borrowNFT(id: UInt64): &NonFungibleToken.NFT
-        pub fun borrowMatrixMarketplaceNFT(id: UInt64): &MatrixMarketplaceNFT.NFT? {
+        pub fun borrowMatrixMarket(id: UInt64): &MatrixMarket.NFT? {
             post {
                 (result == nil) || (result?.id == id):
                     "Cannot borrow NFT reference: the ID of the returned reference is incorrect"
@@ -82,7 +82,7 @@ pub contract MatrixMarketplaceNFT : NonFungibleToken {
         }
     }
 
-    pub resource Collection: MatrixMarketplaceNFTCollectionPublic, NonFungibleToken.Provider, NonFungibleToken.Receiver, NonFungibleToken.CollectionPublic, MetadataViews.ResolverCollection {
+    pub resource Collection: MatrixMarketCollectionPublic, NonFungibleToken.Provider, NonFungibleToken.Receiver, NonFungibleToken.CollectionPublic, MetadataViews.ResolverCollection {
         // dictionary of NFT conforming tokens
         // NFT is a resource type with an `UInt64` ID field
         pub var ownedNFTs: @{UInt64: NonFungibleToken.NFT}
@@ -103,7 +103,7 @@ pub contract MatrixMarketplaceNFT : NonFungibleToken {
         // deposit takes a NFT and adds it to the collections dictionary
         // and adds the ID to the id array
         pub fun deposit(token: @NonFungibleToken.NFT) {
-            let token <- token as! @MatrixMarketplaceNFT.NFT
+            let token <- token as! @MatrixMarket.NFT
 
             let id: UInt64 = token.id
 
@@ -126,11 +126,11 @@ pub contract MatrixMarketplaceNFT : NonFungibleToken {
             return &self.ownedNFTs[id] as &NonFungibleToken.NFT
         }
 
-        pub fun borrowMatrixMarketplaceNFT(id: UInt64): &MatrixMarketplaceNFT.NFT? {
+        pub fun borrowMatrixMarket(id: UInt64): &MatrixMarket.NFT? {
             if self.ownedNFTs[id] != nil {
                 // Create an authorized reference to allow downcasting
                 let ref = &self.ownedNFTs[id] as auth &NonFungibleToken.NFT
-                return ref as! &MatrixMarketplaceNFT.NFT
+                return ref as! &MatrixMarket.NFT
             }
 
             return nil
@@ -138,7 +138,7 @@ pub contract MatrixMarketplaceNFT : NonFungibleToken {
 
         pub fun borrowViewResolver(id: UInt64): &AnyResource{MetadataViews.Resolver} {
             let nft = &self.ownedNFTs[id] as auth &NonFungibleToken.NFT
-            let mlNFT = nft as! &MatrixMarketplaceNFT.NFT
+            let mlNFT = nft as! &MatrixMarket.NFT
             return mlNFT
         }
 
@@ -168,7 +168,7 @@ pub contract MatrixMarketplaceNFT : NonFungibleToken {
 
             // create a new NFT
             var newNFT <- create NFT(
-                id: MatrixMarketplaceNFT.totalSupply,
+                id: MatrixMarket.totalSupply,
                 creator: creator.address,
                 subCollectionId: subCollectionId,
                 metadata: metadata
@@ -179,7 +179,7 @@ pub contract MatrixMarketplaceNFT : NonFungibleToken {
             // deposit it in the recipient's account using their reference
             recipient.deposit(token: <-newNFT)
 
-            MatrixMarketplaceNFT.totalSupply = MatrixMarketplaceNFT.totalSupply + 1
+            MatrixMarket.totalSupply = MatrixMarket.totalSupply + 1
 
             emit Mint(id: tokenRef.id, creator: creator.address, metadata: metadata)
 
@@ -192,17 +192,17 @@ pub contract MatrixMarketplaceNFT : NonFungibleToken {
         self.totalSupply = 0
 
         // Set the named paths
-        self.CollectionStoragePath = /storage/MatrixLabsNFTCollection
-        self.CollectionPublicPath = /public/MatrixLabsNFTCollection
-        self.MinterStoragePath = /storage/MatrixMarketplaceNFTNFTMinter
-        self.MinterPublicPath = /public/MatrixMarketplaceNFTNFTMinter
+        self.CollectionStoragePath = /storage/MatrixMarketCollection
+        self.CollectionPublicPath = /public/MatrixMarketCollection
+        self.MinterStoragePath = /storage/MatrixMarketMinter
+        self.MinterPublicPath = /public/MatrixMarketMinter
 
         // Create a Collection resource and save it to storage
         let collection <- create Collection()
         self.account.save(<-collection, to: self.CollectionStoragePath)
 
         // create a public capability for the collection
-        self.account.link<&MatrixMarketplaceNFT.Collection{NonFungibleToken.Receiver, NonFungibleToken.Provider, NonFungibleToken.CollectionPublic, MatrixMarketplaceNFT.MatrixMarketplaceNFTCollectionPublic}>(
+        self.account.link<&MatrixMarket.Collection{NonFungibleToken.Receiver, NonFungibleToken.Provider, NonFungibleToken.CollectionPublic, MatrixMarket.MatrixMarketCollectionPublic}>(
             self.CollectionPublicPath,
             target: self.CollectionStoragePath
         )
