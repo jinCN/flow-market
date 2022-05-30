@@ -1,25 +1,39 @@
 import * as fcl from "@onflow/fcl";
 
-export const openBid: string = fcl.transaction`
+export const openBid: string = `
 import NonFungibleToken from 0xNON_FUNGIBLE_TOKEN_ADDRESS
-import MatrixMarket from 0xNFT_ADDRESS
 import FungibleToken from 0xFUNGIBLE_TOKEN_ADDRESS
 import FlowToken from 0xFLOW_TOKEN_ADDRESS
 import MatrixMarketOpenBid from 0xOPENBID_ADDRESS
+import FUSD from 0xFUSD_ADDRESS
 
-transaction(nftId: UInt64, amount: UFix64) {
+import 0xsupportedNFTName from 0xsupportedNFTAddress
+
+transaction(nftId: UInt64, amount: UFix64, paymentToken: String, royaltyReceivers: [Address], royaltyAmount: [UFix64], expirationTime: UFix64) {
     let nftReceiver: Capability<&{NonFungibleToken.CollectionPublic}>
     let vaultRef: Capability<&{FungibleToken.Provider,FungibleToken.Balance,FungibleToken.Receiver}>
     let openBid: &MatrixMarketOpenBid.OpenBid
-
+    let saleCuts: [MatrixMarketOpenBid.Cut]
+    
     prepare(acct: AuthAccount) {
-        let vaultRefPrivatePath = /private/FlowTokenVaultRefForMatrixMarketOpenBid
+        var tokenStoragePath = /storage/flowTokenVault
+        var tokenPublicPath = /public/flowTokenReceiver
+        var vaultRefPrivatePath = /private/flowTokenVaultRefForMatrixMarketOpenBid
+        if(paymentToken == "FLOW"){
+        }else if(paymentToken == "FUSD"){
+            tokenStoragePath = /storage/fusdVault
+            tokenPublicPath = /public/fusdReceiver
 
-        self.nftReceiver = acct.getCapability<&{NonFungibleToken.CollectionPublic}>(MatrixMarket.CollectionPublicPath)!
-        assert(self.nftReceiver.check(), message: "Missing or mis-typed MatrixMarket receiver")
+            vaultRefPrivatePath = /private/fusdVaultRefForMatrixMarketOpenBid
+        }else{
+            panic("unsupported paymentToken")
+        }
+        
+        self.nftReceiver = acct.getCapability<&{NonFungibleToken.CollectionPublic}>(0xsupportedNFTName.CollectionPublicPath)!
+        assert(self.nftReceiver.check(), message: "Missing or mis-typed 0xsupportedNFTName receiver")
 
         if !acct.getCapability<&{FungibleToken.Provider,FungibleToken.Balance,FungibleToken.Receiver}>(vaultRefPrivatePath)!.check() {
-            acct.link<&{FungibleToken.Provider,FungibleToken.Balance,FungibleToken.Receiver}>(vaultRefPrivatePath, target: /storage/flowTokenVault)
+            acct.link<&{FungibleToken.Provider,FungibleToken.Balance,FungibleToken.Receiver}>(vaultRefPrivatePath, target: tokenStoragePath)
         }
 
         self.vaultRef = acct.getCapability<&{FungibleToken.Provider,FungibleToken.Balance,FungibleToken.Receiver}>(vaultRefPrivatePath)!
@@ -27,20 +41,32 @@ transaction(nftId: UInt64, amount: UFix64) {
 
         self.openBid = acct.borrow<&MatrixMarketOpenBid.OpenBid>(from: MatrixMarketOpenBid.OpenBidStoragePath)
             ?? panic("Missing or mis-typed MatrixMarketOpenBid OpenBid")
+            
+        let size = royaltyReceivers.length
+        if (size != royaltyAmount.length) {
+            panic ("royaltyReceivers, royaltyAmount length not equal")
+        }
+        self.saleCuts = []
+        var i = 0
+        while i < size {
+            self.saleCuts.append(MatrixMarketOpenBid.Cut(
+                receiver: getAccount(royaltyReceivers[i]).getCapability<&{FungibleToken.Receiver}>(tokenPublicPath)!,
+                amount:  royaltyAmount[i]
+            ))
+            i = i + 1
+        }
     }
 
     execute {
-        let cut = MatrixMarketOpenBid.Cut(
-            receiver: getAccount(0x00).getCapability<&{FungibleToken.Receiver}>(/public/NFTCollection),
-            amount: amount
-        )
+       
         self.openBid.createBid(
             vaultRefCapability: self.vaultRef,
             offerPrice: amount,
             rewardCapability: self.nftReceiver,
-            nftType: Type<@MatrixMarket.NFT>(),
+            nftType: Type<@0xsupportedNFTName.NFT>(),
             nftId: nftId,
-            cuts: []
+            cuts: self.saleCuts,
+            expirationTime: expirationTime
         )
     }
 }`;

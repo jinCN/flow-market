@@ -21,6 +21,7 @@ pub contract MatrixMarketOpenBid {
         nftId: UInt64,
         brutto: UFix64,
         cuts: {Address:UFix64},
+        expirationTime: UFix64,
     )
 
     // event: close a bid (purchased or removed)
@@ -48,6 +49,8 @@ pub contract MatrixMarketOpenBid {
         pub let nftId: UInt64
         pub let brutto: UFix64
         pub let cuts: [Cut]
+        pub let expirationTime: UFix64
+
         pub var purchased: Bool
 
         access(contract) fun setToPurchased() {
@@ -61,7 +64,8 @@ pub contract MatrixMarketOpenBid {
             nftType: Type,
             nftId: UInt64,
             brutto: UFix64,
-            cuts: [Cut]
+            cuts: [Cut],
+            expirationTime: UFix64,
         ) {
             self.bidId = bidId
             self.vaultType = vaultType
@@ -70,6 +74,7 @@ pub contract MatrixMarketOpenBid {
             self.nftId = nftId
             self.brutto = brutto
             self.cuts = cuts
+            self.expirationTime = expirationTime
             self.purchased = false
         }
     }
@@ -91,6 +96,7 @@ pub contract MatrixMarketOpenBid {
             nftType: Type,
             nftId: UInt64,
             cuts: [Cut],
+            expirationTime: UFix64,
         ) {
             pre {
                 rewardCapability.check(): "reward capability not valid"
@@ -116,7 +122,8 @@ pub contract MatrixMarketOpenBid {
                 nftType: nftType,
                 nftId: nftId,
                 brutto: offerPrice,
-                cuts: cuts
+                cuts: cuts,
+                expirationTime: expirationTime,
             )
 
             emit BidAvailable(
@@ -128,11 +135,13 @@ pub contract MatrixMarketOpenBid {
                 nftId: self.details.nftId,
                 brutto: self.details.brutto,
                 cuts: cutsInfo,
+                expirationTime: self.details.expirationTime,
             )
         }
 
         pub fun purchase(item: @NonFungibleToken.NFT): @FungibleToken.Vault {
             pre {
+                self.details.expirationTime > getCurrentBlock().timestamp: "Bid has expired"
                 !self.details.purchased: "Bid has already been purchased"
                 item.isInstance(self.details.nftType): "item NFT is not of specified type"
                 item.id == self.details.nftId: "item NFT does not have specified ID"
@@ -180,6 +189,7 @@ pub contract MatrixMarketOpenBid {
             nftType: Type,
             nftId: UInt64,
             cuts: [Cut],
+            expirationTime: UFix64,
         ): UInt64
         pub fun removeBid(bidId: UInt64)
     }
@@ -200,6 +210,7 @@ pub contract MatrixMarketOpenBid {
             nftType: Type,
             nftId: UInt64,
             cuts: [Cut],
+            expirationTime: UFix64,
         ): UInt64 {
             let bid <- create Bid(
                 vaultRefCapability: vaultRefCapability,
@@ -208,6 +219,7 @@ pub contract MatrixMarketOpenBid {
                 nftType: nftType,
                 nftId: nftId,
                 cuts: cuts,
+                expirationTime: expirationTime,
             )
 
             let bidId = bid.uuid

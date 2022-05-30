@@ -1,12 +1,13 @@
 import * as fcl from "@onflow/fcl";
 
-export const acceptBid: string = fcl.transaction`
+export const acceptBid: string = `
 import NonFungibleToken from 0xNON_FUNGIBLE_TOKEN_ADDRESS
-import MatrixMarket from 0xNFT_ADDRESS
 import FungibleToken from 0xFUNGIBLE_TOKEN_ADDRESS
 import FlowToken from 0xFLOW_TOKEN_ADDRESS
 import MatrixMarketOpenBid from 0xOPENBID_ADDRESS
+import FUSD from 0xFUSD_ADDRESS
 
+import 0xsupportedNFTName from 0xsupportedNFTAddress
 
 transaction(bidId: UInt64, openBidAddress: Address) {
     let nft: @NonFungibleToken.NFT
@@ -24,15 +25,26 @@ transaction(bidId: UInt64, openBidAddress: Address) {
 
         self.bid = self.openBid.borrowBid(bidId: bidId)
                     ?? panic("No Offer with that ID in OpenBid")
+                    
         let nftId = self.bid.getDetails().nftId
-
-        let nftCollection = acct.borrow<&MatrixMarket.Collection>(
-            from: MatrixMarket.CollectionStoragePath
+        
+        let nftCollection = acct.borrow<&0xsupportedNFTName.Collection>(
+            from: 0xsupportedNFTName.CollectionStoragePath
         ) ?? panic("Cannot borrow NFT collection receiver from account")
         self.nft <- nftCollection.withdraw(withdrawID: nftId)
 
-        self.mainVault = acct.borrow<&FlowToken.Vault{FungibleToken.Receiver}>(from: /storage/flowTokenVault)
-            ?? panic("Cannot borrow FlowToken vault from acct storage")
+        let salePaymentVaultType = self.bid.getDetails().vaultType
+        var tokenStoragePath = /storage/flowTokenVault
+
+        if(salePaymentVaultType == Type<@FlowToken.Vault>()){
+        
+        }else if(salePaymentVaultType == Type<@FUSD.Vault>()){
+            tokenStoragePath = /storage/fusdVault
+        }else{
+            panic("unsupported paymentToken")
+        }
+        self.mainVault = acct.borrow<&FungibleToken.Vault{FungibleToken.Receiver}>(from: tokenStoragePath)
+            ?? panic("Cannot borrow vault from acct storage")
     }
 
     execute {

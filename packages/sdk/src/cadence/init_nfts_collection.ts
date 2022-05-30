@@ -15,7 +15,7 @@ transaction {
         if acct.borrow<&MatrixMarket.Collection>(from: MatrixMarket.CollectionStoragePath) == nil {
             let collection <- MatrixMarket.createEmptyCollection() as! @MatrixMarket.Collection
             acct.save(<-collection, to: MatrixMarket.CollectionStoragePath)
-            acct.link<&{NonFungibleToken.Receiver,NonFungibleToken.Provider, NonFungibleToken.CollectionPublic}>(MatrixMarket.CollectionPublicPath, target: MatrixMarket.CollectionStoragePath)
+            acct.link<&{MatrixMarket.MatrixMarketCollectionPublic,NonFungibleToken.Receiver,NonFungibleToken.Provider, NonFungibleToken.CollectionPublic}>(MatrixMarket.CollectionPublicPath, target: MatrixMarket.CollectionStoragePath)
         }
     }
 }`;

@@ -91,10 +91,10 @@ export class MatrixMarketOpenBidClient implements OpenBidClient {
         }
     }
 
-    public async acceptBid(bidResourceId: number, openBidAddress: string): Promise<number> {
+    public async acceptBid(supportedNFTName: string, supportedNFTAddress: string, bidResourceId: number, openBidAddress: string): Promise<number> {
         try {
             const response = await this.fcl.send([
-                acceptBid,
+                this.fcl.transaction(acceptBid.replace(/0xsupportedNFTName/g, supportedNFTName).replace(/0xsupportedNFTAddress/g, supportedNFTAddress)),
                 this.fcl.args([this.fcl.arg(bidResourceId, t.UInt64), this.fcl.arg(openBidAddress, t.Address)]),
                 this.fcl.proposer(this.fcl.currentUser().authorization),
                 this.fcl.authorizations([this.fcl.currentUser().authorization]),
@@ -132,11 +132,18 @@ export class MatrixMarketOpenBidClient implements OpenBidClient {
         }
     }
 
-    public async openBid(nftId: number, amount: string): Promise<boolean> {
+    public async openBid(supportedNFTName:string, supportedNFTAddress:string,nftId: number, amount: string, paymentToken: string, royaltyReceivers: string[], royaltyAmount: string[], expirationTime: string): Promise<boolean> {
         try {
             const response = await this.fcl.send([
-                openBid,
-                this.fcl.args([this.fcl.arg(nftId, t.UInt64), this.fcl.arg(amount, t.UFix64)]),
+                this.fcl.transaction(openBid.replace(/0xsupportedNFTName/g, supportedNFTName).replace(/0xsupportedNFTAddress/g, supportedNFTAddress)),
+                this.fcl.args([
+                  this.fcl.arg(nftId, t.UInt64),
+                    this.fcl.arg(amount, t.UFix64),
+                    this.fcl.arg(paymentToken, t.String),
+                    this.fcl.arg(royaltyReceivers, t.Array(t.Address)),
+                    this.fcl.arg(royaltyAmount, t.Array(t.UFix64)),
+                    this.fcl.arg(expirationTime, t.UFix64),
+                ]),
                 this.fcl.proposer(this.fcl.currentUser().authorization),
                 this.fcl.authorizations([this.fcl.currentUser().authorization]),
                 this.fcl.limit(2000),

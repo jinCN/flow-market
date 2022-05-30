@@ -10,7 +10,7 @@ transaction(nftId: UInt64, amount: UFix64, royaltyReceivers: [Address], royaltyA
     let openBid: &MatrixMarketOpenBid.OpenBid
 
     prepare(acct: AuthAccount) {
-        let vaultRefPrivatePath = /private/FlowTokenVaultRefForMatrixMarketOpenBid
+        let vaultRefPrivatePath = /private/flowTokenVaultRefForMatrixMarketOpenBid
 
         self.nftReceiver = acct.getCapability<&{NonFungibleToken.CollectionPublic}>(MatrixMarket.CollectionPublicPath)!
         assert(self.nftReceiver.check(), message: "Missing or mis-typed MatrixMarket receiver")

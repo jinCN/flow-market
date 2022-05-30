@@ -10,9 +10,10 @@ export interface IBindConfigs {
 export interface OpenBidClient {
     bindFcl(fcl: any, env: FlowEnv, config?: IBindConfigs): Promise<void>;
     setupFcl(key: string, value: string): Promise<void>
-    acceptBid(bidResourceId: number, openBidAddress: string): Promise<number>;
+    
+    acceptBid(supportedNFTName: string, supportedNFTAddress: string, bidResourceId: number, openBidAddress: string): Promise<number>;
     initOpenBid(): Promise<number>;
-    openBid(nftId: number, amount: string): Promise<boolean>;
+    openBid(supportedNFTName:string, supportedNFTAddress:string,nftId: number, amount: string, paymentToken: string, royaltyReceivers: string[], royaltyAmount: string[], expirationTime: string): Promise<boolean>;
     removeBid(bidResourceId: number): Promise<string>;
     getBidIds(account: string): Promise<number[]>;
     getBidDetails(account: string, bidResourceId: number): Promise<string>;
