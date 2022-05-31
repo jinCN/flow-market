@@ -1,16 +1,16 @@
 import {MatrixMarket} from "./model";
 import {FlowEnv} from "./env";
 
-import {acceptBid} from "../cadence/openbid/accept_bid";
-import {initOpenBid} from "../cadence/openbid/init_openbid";
-import {openBid} from "../cadence/openbid/open_bid";
-import {getBidDetails} from "../cadence/openbid/read_bid_details";
-import {getBidIds} from "../cadence/openbid/read_openbid_ids";
-import {removeOpenBid} from "../cadence/openbid/remove_bid";
-import {IBindConfigs, OpenBidClient} from "./interfaces/OpenBidClient";
+import {acceptOffer} from "../cadence/openoffer/accept_offer";
+import {initOpenOffer} from "../cadence/openoffer/init_openoffer";
+import {openOffer} from "../cadence/openoffer/open_offer";
+import {getOfferDetails} from "../cadence/openoffer/read_offer_details";
+import {getOfferIds} from "../cadence/openoffer/read_openoffer_ids";
+import {removeOpenOffer} from "../cadence/openoffer/remove_offer";
+import {IBindConfigs, OpenOfferClient} from "./interfaces/OpenOfferClient";
 import * as t from "@onflow/types";
 
-export class MatrixMarketOpenBidClient implements OpenBidClient {
+export class MatrixMarketOpenOfferClient implements OpenOfferClient {
 
     private fcl: any;
 
@@ -91,11 +91,11 @@ export class MatrixMarketOpenBidClient implements OpenBidClient {
         }
     }
 
-    public async acceptBid(supportedNFTName: string, supportedNFTAddress: string, bidResourceId: number, openBidAddress: string): Promise<number> {
+    public async acceptOffer(supportedNFTName: string, supportedNFTAddress: string, offerResourceId: number, openOfferAddress: string): Promise<number> {
         try {
             const response = await this.fcl.send([
-                this.fcl.transaction(acceptBid.replace(/0xsupportedNFTName/g, supportedNFTName).replace(/0xsupportedNFTAddress/g, supportedNFTAddress)),
-                this.fcl.args([this.fcl.arg(bidResourceId, t.UInt64), this.fcl.arg(openBidAddress, t.Address)]),
+                this.fcl.transaction(acceptOffer.replace(/0xsupportedNFTName/g, supportedNFTName).replace(/0xsupportedNFTAddress/g, supportedNFTAddress)),
+                this.fcl.args([this.fcl.arg(offerResourceId, t.UInt64), this.fcl.arg(openOfferAddress, t.Address)]),
                 this.fcl.proposer(this.fcl.currentUser().authorization),
                 this.fcl.authorizations([this.fcl.currentUser().authorization]),
                 this.fcl.limit(2000),
@@ -112,10 +112,10 @@ export class MatrixMarketOpenBidClient implements OpenBidClient {
         }
     }
 
-    public async initOpenBid(): Promise<number> {
+    public async initOpenOffer(): Promise<number> {
         try {
             const response = await this.fcl.send([
-                initOpenBid,
+                initOpenOffer,
                 this.fcl.proposer(this.fcl.currentUser().authorization),
                 this.fcl.authorizations([this.fcl.currentUser().authorization]),
                 this.fcl.limit(2000),
@@ -132,10 +132,10 @@ export class MatrixMarketOpenBidClient implements OpenBidClient {
         }
     }
 
-    public async openBid(supportedNFTName:string, supportedNFTAddress:string,nftId: number, amount: string, paymentToken: string, royaltyReceivers: string[], royaltyAmount: string[], expirationTime: string): Promise<boolean> {
+    public async openOffer(supportedNFTName:string, supportedNFTAddress:string,nftId: number, amount: string, paymentToken: string, royaltyReceivers: string[], royaltyAmount: string[], expirationTime: string): Promise<boolean> {
         try {
             const response = await this.fcl.send([
-                this.fcl.transaction(openBid.replace(/0xsupportedNFTName/g, supportedNFTName).replace(/0xsupportedNFTAddress/g, supportedNFTAddress)),
+                this.fcl.transaction(openOffer.replace(/0xsupportedNFTName/g, supportedNFTName).replace(/0xsupportedNFTAddress/g, supportedNFTAddress)),
                 this.fcl.args([
                   this.fcl.arg(nftId, t.UInt64),
                     this.fcl.arg(amount, t.UFix64),
@@ -160,11 +160,11 @@ export class MatrixMarketOpenBidClient implements OpenBidClient {
         }
     }
 
-    public async removeBid(bidResourceId: number): Promise<string> {
+    public async removeOffer(offerResourceId: number): Promise<string> {
         try {
             const response = await this.fcl.send([
-                removeOpenBid,
-                this.fcl.args([this.fcl.arg(bidResourceId, t.UInt64)]),
+                removeOpenOffer,
+                this.fcl.args([this.fcl.arg(offerResourceId, t.UInt64)]),
                 this.fcl.proposer(this.fcl.currentUser().authorization),
                 this.fcl.authorizations([this.fcl.currentUser().authorization]),
                 this.fcl.limit(2000),
@@ -181,9 +181,9 @@ export class MatrixMarketOpenBidClient implements OpenBidClient {
         }
     }
 
-    public async getBidIds(account: string): Promise<number[]> {
+    public async getOfferIds(account: string): Promise<number[]> {
         try {
-            const response = await this.fcl.send([getBidIds, this.fcl.args([this.fcl.arg(account, t.Address)]), this.fcl.limit(2000)]);
+            const response = await this.fcl.send([getOfferIds, this.fcl.args([this.fcl.arg(account, t.Address)]), this.fcl.limit(2000)]);
             console.log(response);
             return this.fcl.decode(response);
         } catch (error) {
@@ -192,9 +192,9 @@ export class MatrixMarketOpenBidClient implements OpenBidClient {
         }
     }
 
-    public async getBidDetails(account: string, bidResourceId: number): Promise<string> {
+    public async getOfferDetails(account: string, offerResourceId: number): Promise<string> {
         try {
-            const response = await this.fcl.send([getBidDetails, this.fcl.args([this.fcl.arg(account, t.Address), this.fcl.arg(bidResourceId, t.UInt64)]), this.fcl.limit(2000)]);
+            const response = await this.fcl.send([getOfferDetails, this.fcl.args([this.fcl.arg(account, t.Address), this.fcl.arg(offerResourceId, t.UInt64)]), this.fcl.limit(2000)]);
             console.log(response);
             return this.fcl.decode(response);
         } catch (error) {

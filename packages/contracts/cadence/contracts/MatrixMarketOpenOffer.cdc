@@ -1,18 +1,18 @@
 import FungibleToken from "./lib/FungibleToken.cdc"
 import NonFungibleToken from "./lib/NonFungibleToken.cdc"
 
-pub contract MatrixMarketOpenBid {
+pub contract MatrixMarketOpenOffer {
 
-    // initialize StoragePath and OpenBidPublicPath
-    pub event MatrixMarketOpenBidInitialized()
+    // initialize StoragePath and OpenOfferPublicPath
+    pub event MatrixMarketOpenOfferInitialized()
 
-    // MatrixMarketOpenBid initialized
-    pub event OpenBidInitialized(OpenBidResourceId: UInt64)
+    // MatrixMarketOpenOffer initialized
+    pub event OpenOfferInitialized(OpenOfferResourceId: UInt64)
 
-    pub event OpenBidDestroyed(OpenBidResourceId: UInt64)
+    pub event OpenOfferDestroyed(OpenOfferResourceId: UInt64)
 
     // event: create a bid
-    pub event BidAvailable(
+    pub event OfferAvailable(
         bidAddress: Address,
         bidId: UInt64,
         vaultType: Type,
@@ -25,7 +25,7 @@ pub contract MatrixMarketOpenBid {
     )
 
     // event: close a bid (purchased or removed)
-    pub event BidCompleted(
+    pub event OfferCompleted(
         bidId: UInt64,
         purchased: Bool,
     )
@@ -41,7 +41,7 @@ pub contract MatrixMarketOpenBid {
         }
     }
 
-    pub struct BidDetails {
+    pub struct OfferDetails {
         pub let bidId: UInt64
         pub let vaultType: Type
         pub let bidPrice: UFix64
@@ -79,13 +79,13 @@ pub contract MatrixMarketOpenBid {
         }
     }
 
-    pub resource interface BidPublic {
+    pub resource interface OfferPublic {
         pub fun purchase(item: @NonFungibleToken.NFT): @FungibleToken.Vault?
-        pub fun getDetails(): BidDetails
+        pub fun getDetails(): OfferDetails
     }
 
-    pub resource Bid: BidPublic {
-        access(self) let details: BidDetails
+    pub resource Offer: OfferPublic {
+        access(self) let details: OfferDetails
         access(contract) let vaultRefCapability: Capability<&{FungibleToken.Receiver, FungibleToken.Balance, FungibleToken.Provider}>
         access(contract) let rewardCapability: Capability<&{NonFungibleToken.CollectionPublic}>
 
@@ -115,7 +115,7 @@ pub contract MatrixMarketOpenBid {
             assert(price > 0.0, message: "price must be > 0")
 
             let vaultRef = self.vaultRefCapability.borrow() ?? panic("cannot borrow vaultRefCapability")
-            self.details = BidDetails(
+            self.details = OfferDetails(
                 bidId: self.uuid,
                 vaultType: vaultRef.getType(),
                 bidPrice: price,
@@ -126,7 +126,7 @@ pub contract MatrixMarketOpenBid {
                 expirationTime: expirationTime,
             )
 
-            emit BidAvailable(
+            emit OfferAvailable(
                 bidAddress: rewardCapability.address,
                 bidId: self.details.bidId,
                 vaultType: self.details.vaultType,
@@ -141,8 +141,8 @@ pub contract MatrixMarketOpenBid {
 
         pub fun purchase(item: @NonFungibleToken.NFT): @FungibleToken.Vault {
             pre {
-                self.details.expirationTime > getCurrentBlock().timestamp: "Bid has expired"
-                !self.details.purchased: "Bid has already been purchased"
+                self.details.expirationTime > getCurrentBlock().timestamp: "Offer has expired"
+                !self.details.purchased: "Offer has already been purchased"
                 item.isInstance(self.details.nftType): "item NFT is not of specified type"
                 item.id == self.details.nftId: "item NFT does not have specified ID"
             }
@@ -159,7 +159,7 @@ pub contract MatrixMarketOpenBid {
                 }
             }
 
-            emit BidCompleted(
+            emit OfferCompleted(
                 bidId: self.details.bidId,
                 purchased: self.details.purchased,
             )
@@ -167,13 +167,13 @@ pub contract MatrixMarketOpenBid {
             return <- payment
         }
 
-        pub fun getDetails(): BidDetails {
+        pub fun getDetails(): OfferDetails {
             return self.details
         }
 
         destroy() {
             if !self.details.purchased {
-                emit BidCompleted(
+                emit OfferCompleted(
                     bidId: self.details.bidId,
                     purchased: self.details.purchased,
                 )
@@ -181,8 +181,8 @@ pub contract MatrixMarketOpenBid {
         }
     }
 
-    pub resource interface OpenBidManager {
-        pub fun createBid(
+    pub resource interface OpenOfferManager {
+        pub fun createOffer(
             vaultRefCapability: Capability<&{FungibleToken.Receiver, FungibleToken.Balance, FungibleToken.Provider}>,
             offerPrice: UFix64,
             rewardCapability: Capability<&{NonFungibleToken.CollectionPublic}>,
@@ -191,19 +191,19 @@ pub contract MatrixMarketOpenBid {
             cuts: [Cut],
             expirationTime: UFix64,
         ): UInt64
-        pub fun removeBid(bidId: UInt64)
+        pub fun removeOffer(bidId: UInt64)
     }
 
-    pub resource interface OpenBidPublic {
-        pub fun getBidIds(): [UInt64]
-        pub fun borrowBid(bidId: UInt64): &Bid{BidPublic}?
+    pub resource interface OpenOfferPublic {
+        pub fun getOfferIds(): [UInt64]
+        pub fun borrowOffer(bidId: UInt64): &Offer{OfferPublic}?
         pub fun cleanup(bidId: UInt64)
     }
 
-    pub resource OpenBid : OpenBidManager, OpenBidPublic {
-        access(self) var bids: @{UInt64:Bid}
+    pub resource OpenOffer : OpenOfferManager, OpenOfferPublic {
+        access(self) var bids: @{UInt64:Offer}
 
-        pub fun createBid(
+        pub fun createOffer(
             vaultRefCapability: Capability<&{FungibleToken.Receiver,FungibleToken.Balance,FungibleToken.Provider}>,
             offerPrice: UFix64,
             rewardCapability: Capability<&{NonFungibleToken.CollectionPublic}>,
@@ -212,7 +212,7 @@ pub contract MatrixMarketOpenBid {
             cuts: [Cut],
             expirationTime: UFix64,
         ): UInt64 {
-            let bid <- create Bid(
+            let bid <- create Offer(
                 vaultRefCapability: vaultRefCapability,
                 offerPrice: offerPrice,
                 rewardCapability: rewardCapability,
@@ -229,17 +229,17 @@ pub contract MatrixMarketOpenBid {
             return bidId
         }
 
-        pub fun removeBid(bidId: UInt64) {
+        pub fun removeOffer(bidId: UInt64) {
             destroy self.bids.remove(key: bidId) ?? panic("missing bid")
         }
 
-        pub fun getBidIds(): [UInt64] {
+        pub fun getOfferIds(): [UInt64] {
             return self.bids.keys
         }
 
-        pub fun borrowBid(bidId: UInt64): &Bid{BidPublic}? {
+        pub fun borrowOffer(bidId: UInt64): &Offer{OfferPublic}? {
             if self.bids[bidId] != nil {
-                return &self.bids[bidId] as! &Bid{BidPublic}
+                return &self.bids[bidId] as! &Offer{OfferPublic}
             } else {
                 return nil
             }
@@ -247,36 +247,36 @@ pub contract MatrixMarketOpenBid {
 
         pub fun cleanup(bidId: UInt64) {
             pre {
-                self.bids[bidId] != nil: "could not find Bid with given id"
+                self.bids[bidId] != nil: "could not find Offer with given id"
             }
             let bid <- self.bids.remove(key: bidId)!
-            assert(bid.getDetails().purchased == true, message: "Bid is not purchased, only admin can remove")
+            assert(bid.getDetails().purchased == true, message: "Offer is not purchased, only admin can remove")
             destroy bid
         }
 
         init() {
             self.bids <- {}
-            emit OpenBidInitialized(OpenBidResourceId: self.uuid)
+            emit OpenOfferInitialized(OpenOfferResourceId: self.uuid)
         }
 
         destroy() {
             destroy self.bids
-            emit OpenBidDestroyed(OpenBidResourceId: self.uuid)
+            emit OpenOfferDestroyed(OpenOfferResourceId: self.uuid)
         }
     }
 
     // create openbid resource
-    pub fun createOpenBid(): @OpenBid {
-        return <-create OpenBid()
+    pub fun createOpenOffer(): @OpenOffer {
+        return <-create OpenOffer()
     }
 
-    pub let OpenBidStoragePath: StoragePath
-    pub let OpenBidPublicPath: PublicPath
+    pub let OpenOfferStoragePath: StoragePath
+    pub let OpenOfferPublicPath: PublicPath
 
     init () {
-        self.OpenBidStoragePath = /storage/MatrixMarketOpenBid
-        self.OpenBidPublicPath = /public/MatrixMarketOpenBid
+        self.OpenOfferStoragePath = /storage/MatrixMarketOpenOffer
+        self.OpenOfferPublicPath = /public/MatrixMarketOpenOffer
 
-        emit MatrixMarketOpenBidInitialized()
+        emit MatrixMarketOpenOfferInitialized()
     }
 }

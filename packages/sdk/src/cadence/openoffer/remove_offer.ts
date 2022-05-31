@@ -1,4 +1,7 @@
-import MatrixMarketOpenOffer from "../../contracts/MatrixMarketOpenOffer.cdc"
+import * as fcl from "@onflow/fcl";
+
+export const removeOpenOffer: string = fcl.transaction`
+import MatrixMarketOpenOffer from 0xOPENBID_ADDRESS
 
 transaction(bidId: UInt64) {
     let openOffer: &MatrixMarketOpenOffer.OpenOffer{MatrixMarketOpenOffer.OpenOfferManager}
@@ -11,4 +14,4 @@ transaction(bidId: UInt64) {
     execute {
         self.openOffer.removeOffer(bidId: bidId)
     }
-}
+}`;

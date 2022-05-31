@@ -1,6 +1,7 @@
-import MatrixMarketOpenOffer from "../../contracts/MatrixMarketOpenOffer.cdc"
+import * as fcl from "@onflow/fcl";
 
-// This transaction installs the OpenOffer resource in an account.
+export const initOpenOffer: string = fcl.transaction`
+import MatrixMarketOpenOffer from 0xOPENBID_ADDRESS
 
 transaction {
     prepare(acct: AuthAccount) {
@@ -10,4 +11,4 @@ transaction {
             acct.link<&MatrixMarketOpenOffer.OpenOffer{MatrixMarketOpenOffer.OpenOfferPublic}>(MatrixMarketOpenOffer.OpenOfferPublicPath, target: MatrixMarketOpenOffer.OpenOfferStoragePath)
         }
     }
-}
+}`;

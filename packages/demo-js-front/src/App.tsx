@@ -4,9 +4,9 @@ import {
     fcl,
     FlowEnv,
     MatrixMarketClient,
-    MatrixMarketOpenBidClient
+    MatrixMarketOpenOfferClient
 } from "@matrix-labs/matrix-marketplace-nft-sdk"
-const openBidClient = new MatrixMarketOpenBidClient();
+const openOfferClient = new MatrixMarketOpenOfferClient();
 const nftClient = new MatrixMarketClient();
 
 const network = process.env.REACT_APP_NETWORK;
@@ -18,13 +18,13 @@ function App() {
         if(network === 'test') {
             console.log('checking test....')
             await nftClient.bindFcl(fcl, FlowEnv.flowTestnet);
-            await openBidClient.bindFcl(fcl, FlowEnv.flowTestnet);
+            await openOfferClient.bindFcl(fcl, FlowEnv.flowTestnet);
             await fcl.logIn();
             await fcl.authenticate();
         } else if (network === 'local'){
             console.log('checking local....')
             await nftClient.bindFcl(fcl, FlowEnv.localEmulator);
-            await openBidClient.bindFcl(fcl, FlowEnv.localEmulator);
+            await openOfferClient.bindFcl(fcl, FlowEnv.localEmulator);
             await fcl.logIn();
             await fcl.authenticate();
         }
@@ -71,55 +71,55 @@ function App() {
         console.log(ret);
     };
 
-    const initOpenBid = async () => {
+    const initOpenOffer = async () => {
         let ret;
         const user = await fcl.currentUser().snapshot();
         console.log(user);
-        ret = await openBidClient.initOpenBid().catch(console.error);
+        ret = await openOfferClient.initOpenOffer().catch(console.error);
         console.log(ret);
     };
 
-    const openBid = async () => {
+    const openOffer = async () => {
         let ret;
         const user = await fcl.currentUser().snapshot();
         console.log(user);
-        ret = await openBidClient.openBid(19, '2.58' ).catch(console.error);
+        ret = await openOfferClient.openOffer(19, '2.58' ).catch(console.error);
         console.log(ret);
     };
 
-    const removeOpenBid = async () => {
+    const removeOpenOffer = async () => {
         let ret;
         const user = await fcl.currentUser().snapshot();
         console.log(user);
-        ret = await openBidClient.removeBid(90575769 ).catch(console.error);
+        ret = await openOfferClient.removeOffer(90575769 ).catch(console.error);
         console.log(ret);
     };
 
-    const acceptBid = async () => {
+    const acceptOffer = async () => {
         let ret;
         const user = await fcl.currentUser().snapshot();
         console.log(user);
-        ret = await openBidClient.acceptBid(90576137, '0xae8b87df71d454cb' ).catch(console.error);
+        ret = await openOfferClient.acceptOffer(90576137, '0xae8b87df71d454cb' ).catch(console.error);
         console.log(ret);
     };
 
-    const getBidDetails = async () => {
+    const getOfferDetails = async () => {
 
         let ret;
 
         const user = await fcl.currentUser().snapshot();
         console.log(user);
-        ret = await openBidClient.getBidDetails("0xae8b87df71d454cb", 90576137);
+        ret = await openOfferClient.getOfferDetails("0xae8b87df71d454cb", 90576137);
         console.log(ret);
     };
 
-    const getBidIds = async () => {
+    const getOfferIds = async () => {
 
         let ret;
 
         const user = await fcl.currentUser().snapshot();
         console.log(user);
-        ret = await openBidClient.getBidIds(user.addr);
+        ret = await openOfferClient.getOfferIds(user.addr);
         console.log(ret);
     };
 
@@ -138,23 +138,23 @@ function App() {
             mint
         </button>
 
-        <button onClick={initOpenBid} className="App-link">
-            initOpenBid
+        <button onClick={initOpenOffer} className="App-link">
+            initOpenOffer
         </button>
-        <button onClick={openBid} className="App-link">
-            openBid
+        <button onClick={openOffer} className="App-link">
+            openOffer
         </button>
-        <button onClick={removeOpenBid} className="App-link">
-            removeOpenBid
+        <button onClick={removeOpenOffer} className="App-link">
+            removeOpenOffer
         </button>
-        <button onClick={acceptBid} className="App-link">
-            acceptBid
+        <button onClick={acceptOffer} className="App-link">
+            acceptOffer
         </button>
-        <button onClick={getBidDetails} className="App-link">
-            getBidDetails
+        <button onClick={getOfferDetails} className="App-link">
+            getOfferDetails
         </button>
-        <button onClick={getBidIds} className="App-link">
-            getBidIds
+        <button onClick={getOfferIds} className="App-link">
+            getOfferIds
         </button>
     </div>
   );

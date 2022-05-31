@@ -1,6 +1,7 @@
-import MatrixMarketOpenOffer from "../../contracts/MatrixMarketOpenOffer.cdc"
+import * as fcl from "@onflow/fcl";
 
-// This script returns an array of all the nft uuids for sale through a OpenOffer
+export const getOfferIds: string = fcl.script`
+import MatrixMarketOpenOffer from 0xOPENBID_ADDRESS
 
 pub fun main(acct: Address): [UInt64] {
     let OpenOfferRef = getAccount(acct)
@@ -11,4 +12,4 @@ pub fun main(acct: Address): [UInt64] {
         ?? panic("Could not borrow public OpenOffer from address")
 
     return OpenOfferRef.getOfferIds()
-}
+}`;

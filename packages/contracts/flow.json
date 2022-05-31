@@ -42,7 +42,7 @@
       }
     },
     "MatrixMarket": "./cadence/contracts/MatrixMarket.cdc",
-    "MatrixMarketOpenBid": "./cadence/contracts/MatrixMarketOpenBid.cdc",
+    "MatrixMarketOpenOffer": "./cadence/contracts/MatrixMarketOpenOffer.cdc",
     "MatrixMarketEnglishAuction": "./cadence/contracts/MatrixMarketEnglishAuction.cdc"
   },
   "networks": {
@@ -77,14 +77,14 @@
     "emulator": {
       "emulator-account": [
         "NonFungibleToken",
-        "MatrixMarketOpenBid",
+        "MatrixMarketOpenOffer",
         "MetadataViews",
         "MatrixMarket"
       ]
     },
     "testnet": {
       "testnet-account": [
-        "MatrixMarketOpenBid",
+        "MatrixMarketOpenOffer",
         "MatrixMarket"
       ]
     }

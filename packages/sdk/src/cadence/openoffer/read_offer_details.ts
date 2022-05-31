@@ -1,6 +1,7 @@
-import MatrixMarketOpenOffer from "../../contracts/MatrixMarketOpenOffer.cdc"
+import * as fcl from "@onflow/fcl";
 
-// This script returns the details for a Offer within a OpenOffer
+export const getOfferDetails: string = fcl.script`
+import MatrixMarketOpenOffer from 0xOPENBID_ADDRESS
 
 pub fun main(acct: Address, OfferResourceId: UInt64): MatrixMarketOpenOffer.OfferDetails {
     let OpenOfferRef = getAccount(acct)
@@ -14,4 +15,4 @@ pub fun main(acct: Address, OfferResourceId: UInt64): MatrixMarketOpenOffer.Offe
         ?? panic("No item with that ID")
 
     return Offer.getDetails()
-}
+}`;

@@ -1,30 +1,30 @@
 import * as fcl from "@onflow/fcl";
 
-export const acceptBid: string = `
+export const acceptOffer: string = `
 import NonFungibleToken from 0xNON_FUNGIBLE_TOKEN_ADDRESS
 import FungibleToken from 0xFUNGIBLE_TOKEN_ADDRESS
 import FlowToken from 0xFLOW_TOKEN_ADDRESS
-import MatrixMarketOpenBid from 0xOPENBID_ADDRESS
+import MatrixMarketOpenOffer from 0xOPENBID_ADDRESS
 import FUSD from 0xFUSD_ADDRESS
 
 import 0xsupportedNFTName from 0xsupportedNFTAddress
 
-transaction(bidId: UInt64, openBidAddress: Address) {
+transaction(bidId: UInt64, openOfferAddress: Address) {
     let nft: @NonFungibleToken.NFT
     let mainVault: &FlowToken.Vault{FungibleToken.Receiver}
-    let openBid: &MatrixMarketOpenBid.OpenBid{MatrixMarketOpenBid.OpenBidPublic}
-    let bid: &MatrixMarketOpenBid.Bid{MatrixMarketOpenBid.BidPublic}
+    let openOffer: &MatrixMarketOpenOffer.OpenOffer{MatrixMarketOpenOffer.OpenOfferPublic}
+    let bid: &MatrixMarketOpenOffer.Offer{MatrixMarketOpenOffer.OfferPublic}
 
     prepare(acct: AuthAccount) {
-        self.openBid = getAccount(openBidAddress)
-            .getCapability<&MatrixMarketOpenBid.OpenBid{MatrixMarketOpenBid.OpenBidPublic}>(
-                MatrixMarketOpenBid.OpenBidPublicPath
+        self.openOffer = getAccount(openOfferAddress)
+            .getCapability<&MatrixMarketOpenOffer.OpenOffer{MatrixMarketOpenOffer.OpenOfferPublic}>(
+                MatrixMarketOpenOffer.OpenOfferPublicPath
             )!
             .borrow()
-            ?? panic("Could not borrow OpenBid from provided address")
+            ?? panic("Could not borrow OpenOffer from provided address")
 
-        self.bid = self.openBid.borrowBid(bidId: bidId)
-                    ?? panic("No Offer with that ID in OpenBid")
+        self.bid = self.openOffer.borrowOffer(bidId: bidId)
+                    ?? panic("No Offer with that ID in OpenOffer")
                     
         let nftId = self.bid.getDetails().nftId
         
@@ -50,6 +50,6 @@ transaction(bidId: UInt64, openBidAddress: Address) {
     execute {
         let vault <- self.bid.purchase(item: <-self.nft)!
         self.mainVault.deposit(from: <-vault)
-        self.openBid.cleanup(bidId: bidId)
+        self.openOffer.cleanup(bidId: bidId)
     }
 }`;

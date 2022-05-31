@@ -1,16 +1,16 @@
 import FungibleToken from "../../contracts/lib/FungibleToken.cdc"
 import NonFungibleToken from "../../contracts/lib/NonFungibleToken.cdc"
-import MatrixMarketOpenBid from "../../contracts/MatrixMarketOpenBid.cdc"
+import MatrixMarketOpenOffer from "../../contracts/MatrixMarketOpenOffer.cdc"
 import FlowToken from "../../contracts/lib/FlowToken.cdc"
 import MatrixMarket from "../../contracts/MatrixMarket.cdc"
 
 transaction(nftId: UInt64, amount: UFix64, royaltyReceivers: [Address], royaltyAmount: [UFix64]) {
     let nftReceiver: Capability<&{NonFungibleToken.CollectionPublic}>
     let vaultRef: Capability<&{FungibleToken.Receiver,FungibleToken.Balance,FungibleToken.Provider}>
-    let openBid: &MatrixMarketOpenBid.OpenBid
+    let openOffer: &MatrixMarketOpenOffer.OpenOffer
 
     prepare(acct: AuthAccount) {
-        let vaultRefPrivatePath = /private/flowTokenVaultRefForMatrixMarketOpenBid
+        let vaultRefPrivatePath = /private/flowTokenVaultRefForMatrixMarketOpenOffer
 
         self.nftReceiver = acct.getCapability<&{NonFungibleToken.CollectionPublic}>(MatrixMarket.CollectionPublicPath)!
         assert(self.nftReceiver.check(), message: "Missing or mis-typed MatrixMarket receiver")
@@ -22,8 +22,8 @@ transaction(nftId: UInt64, amount: UFix64, royaltyReceivers: [Address], royaltyA
         self.vaultRef = acct.getCapability<&{FungibleToken.Receiver,FungibleToken.Balance,FungibleToken.Provider}>(vaultRefPrivatePath)!
         assert(self.vaultRef.check(), message: "Missing or mis-typed fungible token vault ref")
 
-        self.openBid = acct.borrow<&MatrixMarketOpenBid.OpenBid>(from: MatrixMarketOpenBid.OpenBidStoragePath)
-            ?? panic("Missing or mis-typed MatrixMarketOpenBid OpenBid")
+        self.openOffer = acct.borrow<&MatrixMarketOpenOffer.OpenOffer>(from: MatrixMarketOpenOffer.OpenOfferStoragePath)
+            ?? panic("Missing or mis-typed MatrixMarketOpenOffer OpenOffer")
     }
 
     execute {
@@ -31,20 +31,20 @@ transaction(nftId: UInt64, amount: UFix64, royaltyReceivers: [Address], royaltyA
         if (size != royaltyAmount.length) {
             panic ("royaityReceivers, royaityaMount length not equal")
         }
-        let saleCut = MatrixMarketOpenBid.Cut(
+        let saleCut = MatrixMarketOpenOffer.Cut(
                     receiver: getAccount(royaltyReceivers[0]).getCapability<&{FungibleToken.Receiver}>(/public/flowTokenReceiver)!,
                     amount: royaltyAmount[0]
                 )
         let saleCuts = [saleCut]
         while size > 1 {
-            saleCuts.append(MatrixMarketOpenBid.Cut(
+            saleCuts.append(MatrixMarketOpenOffer.Cut(
                 receiver: getAccount(royaltyReceivers[size-1]).getCapability<&{FungibleToken.Receiver}>(/public/flowTokenReceiver)!,
                 amount:  royaltyAmount[size-1]
             ))
             size = size - 1
         }
 
-        self.openBid.createBid(
+        self.openOffer.createOffer(
             vaultRefCapability: self.vaultRef,
             offerPrice: amount,
             rewardCapability: self.nftReceiver,
