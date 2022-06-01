@@ -1,5 +1,6 @@
 import * as fcl from "@onflow/fcl";
 
+// language=Cadence
 export const openOffer: string = `
 import NonFungibleToken from 0xNON_FUNGIBLE_TOKEN_ADDRESS
 import FungibleToken from 0xFUNGIBLE_TOKEN_ADDRESS

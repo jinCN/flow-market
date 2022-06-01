@@ -1,3 +1,4 @@
+import {FlowService} from './flow';
 import {MatrixMarket} from "./model";
 import {FlowEnv} from "./env";
 
@@ -14,7 +15,9 @@ export class MatrixMarketClient implements NFTClient {
     private fcl: any;
 
     private env: FlowEnv | undefined;
-
+    
+    private authMethod?: (account?: any) => Promise<any>
+    
     public async bindFcl(fcl: any, env: FlowEnv, config?: IBindConfigs): Promise<void> {
         this.env = env;
         this.fcl = fcl;
@@ -86,16 +89,24 @@ export class MatrixMarketClient implements NFTClient {
             }
         }
     }
-
+    
+    public bindAuth(flowAddress: string, privateKeyHex: string, accountIndex: number = 0) {
+        this.authMethod = new FlowService(flowAddress, privateKeyHex, accountIndex).authorize()
+    }
+    
+    private getAuth() {
+        return this.authMethod || this.fcl.currentUser().authorization
+    }
+    
     public async mintNFTs(nftAdminAddress: string, recipientBatch: string[], subCollectionIdBatch: string[], metadataBatch: Array<{[key:string]:string}>): Promise<string> {
         try {
             const response = await this.fcl.send([
                 mintNFTs,
                 this.fcl.args([this.fcl.arg(nftAdminAddress, t.Address), this.fcl.arg(recipientBatch, t.Array(t.Address)), this.fcl.arg(subCollectionIdBatch, t.Array(t.String)), this.fcl.arg(metadataBatch, t.Array(t.Dictionary({key: t.String, value: t.String})))]),
-                this.fcl.proposer(this.fcl.currentUser().authorization),
-                this.fcl.authorizations([this.fcl.currentUser().authorization]),
+                this.fcl.proposer(this.getAuth()),
+                this.fcl.authorizations([this.getAuth()]),
                 this.fcl.limit(1000),
-                this.fcl.payer(this.fcl.currentUser().authorization)
+                this.fcl.payer(this.getAuth())
             ]);
             const ret = await this.fcl.tx(response).onceSealed();
             if (ret.errorMessage !== "" && ret.status != 4) {
@@ -165,10 +176,10 @@ export class MatrixMarketClient implements NFTClient {
         try {
             const response = await this.fcl.send([
                 initNFTCollection,
-                this.fcl.proposer(this.fcl.currentUser().authorization),
-                this.fcl.authorizations([this.fcl.currentUser().authorization]),
+                this.fcl.proposer(this.getAuth()),
+                this.fcl.authorizations([this.getAuth()]),
                 this.fcl.limit(1000),
-                this.fcl.payer(this.fcl.currentUser().authorization)
+                this.fcl.payer(this.getAuth())
             ]);
             const ret = await this.fcl.tx(response).onceSealed();
             if (ret.errorMessage !== "" && ret.status != 4) {

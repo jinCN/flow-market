@@ -11,7 +11,7 @@ import 0xsupportedNFTName from 0xsupportedNFTAddress
 
 transaction(bidId: UInt64, openOfferAddress: Address) {
     let nft: @NonFungibleToken.NFT
-    let mainVault: &FlowToken.Vault{FungibleToken.Receiver}
+    let receiver: Capability<&{FungibleToken.Receiver}>
     let openOffer: &MatrixMarketOpenOffer.OpenOffer{MatrixMarketOpenOffer.OpenOfferPublic}
     let bid: &MatrixMarketOpenOffer.Offer{MatrixMarketOpenOffer.OfferPublic}
 
@@ -34,22 +34,23 @@ transaction(bidId: UInt64, openOfferAddress: Address) {
         self.nft <- nftCollection.withdraw(withdrawID: nftId)
 
         let salePaymentVaultType = self.bid.getDetails().vaultType
-        var tokenStoragePath = /storage/flowTokenVault
+        var tokenReceiverPath = /public/flowTokenReceiver
 
         if(salePaymentVaultType == Type<@FlowToken.Vault>()){
         
         }else if(salePaymentVaultType == Type<@FUSD.Vault>()){
-            tokenStoragePath = /storage/fusdVault
+            tokenReceiverPath = /public/fusdReceiver
         }else{
             panic("unsupported paymentToken")
         }
-        self.mainVault = acct.borrow<&FungibleToken.Vault{FungibleToken.Receiver}>(from: tokenStoragePath)
-            ?? panic("Cannot borrow vault from acct storage")
+        self.receiver = acct.getCapability(tokenReceiverPath)
+            .borrow<&{FungibleToken.Receiver}>()
+            ?? panic("Could not borrow receiver reference to the recipient's Vault")
     }
 
     execute {
         let vault <- self.bid.purchase(item: <-self.nft)!
-        self.mainVault.deposit(from: <-vault)
+        self.receiver.deposit(from: <-vault)
         self.openOffer.cleanup(bidId: bidId)
     }
 }`;

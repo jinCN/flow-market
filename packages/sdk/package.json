@@ -1,6 +1,6 @@
 {
   "name": "@matrix-labs/matrix-marketplace-nft-sdk",
-  "version": "0.0.11",
+  "version": "0.0.14",
   "main": "./dist/index.js",
   "license": "MIT",
   "scripts": {
@@ -35,8 +35,11 @@
     "access": "public"
   },
   "dependencies": {
-    "@onflow/fcl": "^0.0.77",
-    "@onflow/types": "^0.0.5"
+    "@onflow/fcl": "^1.0.2",
+    "@types/elliptic": "^6.4.14",
+    "@onflow/types": "^1.0.1",
+    "elliptic": "^6.5.4",
+    "sha3": "^2.1.4"
   },
   "lint-staged": {
     "*.{js,ts}": [

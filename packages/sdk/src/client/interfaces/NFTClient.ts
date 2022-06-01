@@ -11,6 +11,7 @@ export interface IBindConfigs {
 export interface NFTClient {
     bindFcl(fcl: any, env: FlowEnv, config?: IBindConfigs): Promise<void>;
     setupFcl(key: string, value: string): Promise<void>
+    bindAuth(flowAddress: string, privateKeyHex: string, accountIndex?: number): void
     FUSDBalance(address: string): Promise<number>;
     FLOWBalance(address: string): Promise<number>;
     checkNFTsCollection(address: string): Promise<boolean>;

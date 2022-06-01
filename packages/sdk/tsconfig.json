@@ -9,6 +9,8 @@
     "outDir": "./dist",
     "removeComments": true,
     "strict": true,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
     "baseUrl": "./",
     "allowJs": true,
     "types": ["mocha", "node"],

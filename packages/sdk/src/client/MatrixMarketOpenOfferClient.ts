@@ -1,3 +1,5 @@
+import {checkOpenOffer} from '../cadence/openoffer/check_openoffer';
+import {FlowService} from './flow';
 import {MatrixMarket} from "./model";
 import {FlowEnv} from "./env";
 
@@ -15,7 +17,9 @@ export class MatrixMarketOpenOfferClient implements OpenOfferClient {
     private fcl: any;
 
     private env: FlowEnv | undefined;
-
+    
+    private authMethod?: (account?: any) => Promise<any>
+    
     public async bindFcl(fcl: any, env: FlowEnv, config?: IBindConfigs): Promise<void> {
         this.env = env;
         this.fcl = fcl;
@@ -90,16 +94,38 @@ export class MatrixMarketOpenOfferClient implements OpenOfferClient {
             }
         }
     }
-
-    public async acceptOffer(supportedNFTName: string, supportedNFTAddress: string, offerResourceId: number, openOfferAddress: string): Promise<number> {
+    
+    public bindAuth(flowAddress: string, privateKeyHex: string, accountIndex: number = 0) {
+        this.authMethod = new FlowService(flowAddress, privateKeyHex, accountIndex).authorize()
+    }
+    
+    private getAuth() {
+        return this.authMethod || this.fcl.currentUser().authorization
+    }
+    
+    public async checkOpenOffer(address: string): Promise<boolean> {
+        try {
+            const response = await this.fcl.send([
+                checkOpenOffer,
+                this.fcl.args([this.fcl.arg(address, t.Address)]),
+                this.fcl.limit(2000)
+            ]);
+            return this.fcl.decode(response);
+        } catch (error) {
+            console.error(error);
+            return Promise.reject(error);
+        }
+    }
+    
+    public async acceptOffer(supportedNFTName: string, supportedNFTAddress: string, offerResourceId: number, openOfferAddress: string): Promise<string> {
         try {
             const response = await this.fcl.send([
                 this.fcl.transaction(acceptOffer.replace(/0xsupportedNFTName/g, supportedNFTName).replace(/0xsupportedNFTAddress/g, supportedNFTAddress)),
                 this.fcl.args([this.fcl.arg(offerResourceId, t.UInt64), this.fcl.arg(openOfferAddress, t.Address)]),
-                this.fcl.proposer(this.fcl.currentUser().authorization),
-                this.fcl.authorizations([this.fcl.currentUser().authorization]),
+                this.fcl.proposer(this.getAuth()),
+                this.fcl.authorizations([this.getAuth()]),
                 this.fcl.limit(2000),
-                this.fcl.payer(this.fcl.currentUser().authorization)
+                this.fcl.payer(this.getAuth())
             ]);
             const ret = await this.fcl.tx(response).onceSealed();
             if (ret.errorMessage !== "" && ret.status != 4) {
@@ -112,14 +138,14 @@ export class MatrixMarketOpenOfferClient implements OpenOfferClient {
         }
     }
 
-    public async initOpenOffer(): Promise<number> {
+    public async initOpenOffer(): Promise<string> {
         try {
             const response = await this.fcl.send([
                 initOpenOffer,
-                this.fcl.proposer(this.fcl.currentUser().authorization),
-                this.fcl.authorizations([this.fcl.currentUser().authorization]),
+                this.fcl.proposer(this.getAuth()),
+                this.fcl.authorizations([this.getAuth()]),
                 this.fcl.limit(2000),
-                this.fcl.payer(this.fcl.currentUser().authorization)
+                this.fcl.payer(this.getAuth())
             ]);
             const ret = await this.fcl.tx(response).onceSealed();
             if (ret.errorMessage !== "" && ret.status != 4) {
@@ -132,7 +158,7 @@ export class MatrixMarketOpenOfferClient implements OpenOfferClient {
         }
     }
 
-    public async openOffer(supportedNFTName:string, supportedNFTAddress:string,nftId: number, amount: string, paymentToken: string, royaltyReceivers: string[], royaltyAmount: string[], expirationTime: string): Promise<boolean> {
+    public async openOffer(supportedNFTName:string, supportedNFTAddress:string,nftId: number, amount: string, paymentToken: string, royaltyReceivers: string[], royaltyAmount: string[], expirationTime: string): Promise<string> {
         try {
             const response = await this.fcl.send([
                 this.fcl.transaction(openOffer.replace(/0xsupportedNFTName/g, supportedNFTName).replace(/0xsupportedNFTAddress/g, supportedNFTAddress)),
@@ -144,10 +170,10 @@ export class MatrixMarketOpenOfferClient implements OpenOfferClient {
                     this.fcl.arg(royaltyAmount, t.Array(t.UFix64)),
                     this.fcl.arg(expirationTime, t.UFix64),
                 ]),
-                this.fcl.proposer(this.fcl.currentUser().authorization),
-                this.fcl.authorizations([this.fcl.currentUser().authorization]),
+                this.fcl.proposer(this.getAuth()),
+                this.fcl.authorizations([this.getAuth()]),
                 this.fcl.limit(2000),
-                this.fcl.payer(this.fcl.currentUser().authorization)
+                this.fcl.payer(this.getAuth())
             ]);
             const ret = await this.fcl.tx(response).onceSealed();
             if (ret.errorMessage !== "" && ret.status != 4) {
@@ -165,10 +191,10 @@ export class MatrixMarketOpenOfferClient implements OpenOfferClient {
             const response = await this.fcl.send([
                 removeOpenOffer,
                 this.fcl.args([this.fcl.arg(offerResourceId, t.UInt64)]),
-                this.fcl.proposer(this.fcl.currentUser().authorization),
-                this.fcl.authorizations([this.fcl.currentUser().authorization]),
+                this.fcl.proposer(this.getAuth()),
+                this.fcl.authorizations([this.getAuth()]),
                 this.fcl.limit(2000),
-                this.fcl.payer(this.fcl.currentUser().authorization)
+                this.fcl.payer(this.getAuth())
             ]);
             const ret = await this.fcl.tx(response).onceSealed();
             if (ret.errorMessage !== "" && ret.status != 4) {
