@@ -1,5 +1,6 @@
 import * as fcl from "@onflow/fcl";
 
+// language=Cadence
 export const acceptOffer: string = `
 import NonFungibleToken from 0xNON_FUNGIBLE_TOKEN_ADDRESS
 import FungibleToken from 0xFUNGIBLE_TOKEN_ADDRESS
@@ -11,7 +12,7 @@ import 0xsupportedNFTName from 0xsupportedNFTAddress
 
 transaction(bidId: UInt64, openOfferAddress: Address) {
     let nft: @NonFungibleToken.NFT
-    let receiver: Capability<&{FungibleToken.Receiver}>
+    let receiver: &{FungibleToken.Receiver}
     let openOffer: &MatrixMarketOpenOffer.OpenOffer{MatrixMarketOpenOffer.OpenOfferPublic}
     let bid: &MatrixMarketOpenOffer.Offer{MatrixMarketOpenOffer.OfferPublic}
 

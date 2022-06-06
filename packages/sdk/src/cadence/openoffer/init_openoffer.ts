@@ -1,5 +1,6 @@
 import * as fcl from "@onflow/fcl";
 
+// language=Cadence
 export const initOpenOffer: string = fcl.transaction`
 import MatrixMarketOpenOffer from 0xOPENBID_ADDRESS
 

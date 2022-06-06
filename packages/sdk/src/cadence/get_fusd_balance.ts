@@ -1,5 +1,6 @@
 import * as fcl from "@onflow/fcl";
 
+// language=Cadence
 export const getFUSDBalanceScript: string = fcl.script`
 import FungibleToken from 0xFUNGIBLE_TOKEN_ADDRESS
 import FUSD from 0xFUSD_ADDRESS

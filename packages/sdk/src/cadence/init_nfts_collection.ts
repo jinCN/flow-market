@@ -1,5 +1,6 @@
 import * as fcl from "@onflow/fcl";
 
+// language=Cadence
 export const initNFTCollection: string = fcl.transaction`
 import NonFungibleToken from 0xNON_FUNGIBLE_TOKEN_ADDRESS
 import MatrixMarket from 0xNFT_ADDRESS
