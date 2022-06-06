@@ -6,6 +6,7 @@
   "private": true,
   "workspaces": [
     "packages/contracts",
+    "packages/demo-js-front",
     "packages/sdk"
   ],
   "scripts": {
@@ -15,6 +16,8 @@
     "format": "yarn workspaces run format",
     "format:fix": "yarn workspaces run format:fix",
     "test": "yarn workspaces run test",
-    "test:cov": "yarn workspaces run test:cov"
+    "test:cov": "yarn workspaces run test:cov",
+    "build:sdk": "yarn workspace @matrix-labs/matrix-marketplace-nft-sdk run build",
+    "start:demo": "yarn workspace demo-js-frontend run start"
   }
 }
