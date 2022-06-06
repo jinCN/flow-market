@@ -14,28 +14,22 @@ flow transactions send cadence/transactions/setAccount.cdc --signer emulator-acc
 flow transactions send cadence/transactions/mintNFT_test.cdc 0x01cf0e2f2f715450 --signer emulator-account  # emulator-account is minter
 flow transactions send cadence/transactions/mintNFT_test.cdc 0xf8d6e0586b0a20c7 --signer emulator-account
 
-flow transactions send cadence/transactions/list/create_storefront.cdc --signer emulator-account2
-flow transactions send cadence/transactions/list/create_storefront_capability.cdc --signer emulator-account2
-
-flow scripts execute cadence/scripts/getNFTs.cdc 0xf8d6e0586b0a20c7
-flow transactions send cadence/transactions/list/create_listing.cdc 0 2.2 --signer emulator-account2
-flow transactions send cadence/transactions/list/purchase_listing.cdc 36 0x1cf0e2f2f715450 --signer emulator-account
-flow scripts execute cadence/scripts/getNFTs.cdc 0xf8d6e0586b0a20c7
-
 #testnet
-flow scripts execute cadence/scripts/getNFTs.cdc 0xa2811f685dccc3ec --network=testnet
-flow transactions send cadence/transactions/mintNFT_test.cdc 0xa56c5e5fd9b9ca22 --signer testnet-account --network=testnet
-flow transactions send cadence/transactions/setAccount.cdc --signer testnet-account2 --network=testnet
-flow transactions send cadence/transactions/mintNFT_test.cdc 0x7f3812b53dd4de20 --signer testnet-account --network=testnet
-flow scripts execute cadence/scripts/getNFTs.cdc 0x7f3812b53dd4de20 --network=testnet
-flow transactions send cadence/transactions/mintNFT_test.cdc 0x445697f20309b7c0 --signer testnet-account --network=testnet
-flow transactions send cadence/transactions/list/create_storefront.cdc --signer testnet-account2 --network=testnet
-flow transactions send cadence/transactions/list/create_storefront_capability.cdc --signer testnet-account2 --network=testnet
-flow transactions send cadence/transactions/list/create_listing.cdc 0 2.2 --signer testnet-account2 --network=testnet
-flow transactions send cadence/transactions/list/remove_listing.cdc 43115912 --signer testnet-account2 --network=testnet
-flow transactions send cadence/transactions/mintNFT_test.cdc [0x9a3bdd00396c6458] --signer testnet-account2 --network=testnet
-flow transactions send cadence/transactions/mintNFT.cdc '[0x9a3bdd00396c6458]' '["asd"]' '[{"version","123"}]' --signer testnet-account2 --network=testnet
-
-flow transactions send cadence/transactions/create_public_minter_for_factory.cdc --signer testnet-account --network=testnet
-
- 
+#openbid
+##mint nft
+flow scripts execute cadence/scripts/getNFTs.cdc 0xa56c5e5fd9b9ca22 --network=testnet
+flow transactions send cadence/transactions/mintNFT_test.cdc [0xa56c5e5fd9b9ca22] --signer testnet-account2 --network=testnet   #26
+flow transactions send cadence/transactions/mintNFT_test.cdc [0xeca46256a90fc4ae] --signer testnet-account2 --network=testnet   #27
+flow scripts execute cadence/scripts/getNFTs.cdc 0xeca46256a90fc4ae --network=testnet
+##init openbid
+flow transactions send cadence/transactions/bid/init_openbid.cdc --signer testnet-account2 --network=testnet
+flow transactions send cadence/transactions/bid/init_openbid.cdc --signer testnet-account3 --network=testnet
+##open_bid
+flow scripts execute cadence/scripts/bid/read_openbid_ids.cdc 0xa56c5e5fd9b9ca22 --network=testnet
+flow transactions send cadence/transactions/bid/open_bid.cdc 26 1.1 --signer testnet-account3 --network=testnet
+flow scripts execute cadence/scripts/bid/read_openbid_ids.cdc 0xeca46256a90fc4ae --network=testnet
+flow scripts execute cadence/scripts/bid/read_bid_details.cdc 0xeca46256a90fc4ae 89861443 --network=testnet
+##remove own unpurchased bid
+flow transactions send cadence/transactions/bid/remove_bid.cdc 89858406 --signer testnet-account3 --network=testnet
+##accept bid
+flow transactions send cadence/transactions/bid/accept_bid.cdc 89861732 0xeca46256a90fc4ae --signer testnet-account2 --network=testnet

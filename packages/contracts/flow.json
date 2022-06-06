@@ -15,8 +15,8 @@
     "FungibleToken": {
       "source": "./cadence/contracts/lib/FungibleToken.cdc",
       "aliases": {
-        "testnet": "9a0766d93b6608b7",
-        "emulator": "ee82856bf20e2aa6"
+        "emulator": "ee82856bf20e2aa6",
+        "testnet": "9a0766d93b6608b7"
       }
     },
     "FlowToken": {
@@ -34,10 +34,16 @@
         "mainnet": "1d7e57aa55817448"
       }
     },
-    "MetadataViews": "./cadence/contracts/lib/MetadataViews.cdc",
-    "NFTStorefront":"./cadence/contracts/lib/NFTStorefront.cdc",
-    "MatrixMarketplaceNFT": "./cadence/contracts/MatrixMarketplaceNFT.cdc",
-    "MatrixMarketplaceOpenBid": "./cadence/contracts/MatrixMarketplaceOpenBid.cdc"
+    "MetadataViews": {
+      "source": "./cadence/contracts/lib/MetadataViews.cdc",
+      "aliases": {
+        "testnet": "631e88ae7f1d7c20",
+        "mainnet": "1d7e57aa55817448"
+      }
+    },
+    "MatrixMarket": "./cadence/contracts/MatrixMarket.cdc",
+    "MatrixMarketOpenOffer": "./cadence/contracts/MatrixMarketOpenOffer.cdc",
+    "MatrixMarketEnglishAuction": "./cadence/contracts/MatrixMarketEnglishAuction.cdc"
   },
   "networks": {
     "emulator": "127.0.0.1:3569",
@@ -47,7 +53,7 @@
   "accounts": {
     "emulator-account2": {
       "address": "01cf0e2f2f715450",
-      "key": "2eae2f31cb5b756151fa11d82949c634b8f28796a711d7eb1e52cc301ed11111",
+      "key": "e00e33ee30228635894dab4640fd7aa4fd4e8b3218315c3042f73e1ad234acbb",
       "chain": "flow-emulator"
     },
     "emulator-account": {
@@ -61,24 +67,26 @@
     "testnet-account2": {
       "address": "0xa56c5e5fd9b9ca22",
       "key": "7a437e23da24e7772896c556262fafa58af9fde12890be5f33509c8ce8b94e64"
+    },
+    "testnet-account3": {
+      "address": "0xeca46256a90fc4ae",
+      "key": "7a437e23da24e7772896c556262fafa58af9fde12890be5f33509c8ce8b94e64"
     }
   },
   "deployments": {
     "emulator": {
       "emulator-account": [
-        "NFTStorefront",
-        "MatrixMarketplaceOpenBid",
+        "NonFungibleToken",
+        "MatrixMarketOpenOffer",
         "MetadataViews",
-        "MatrixMarketplaceNFT"
+        "MatrixMarket"
       ]
     },
     "testnet": {
       "testnet-account": [
-        "NFTStorefront",
-        "MatrixMarketplaceNFT",
-        "MetadataViews"
+        "MatrixMarketOpenOffer",
+        "MatrixMarket"
       ]
     }
   }
 }
- 
