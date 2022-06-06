@@ -98,7 +98,7 @@ export class MatrixMarketClient implements NFTClient {
         return this.authMethod || this.fcl.currentUser().authorization
     }
     
-    public async mintNFTs(nftAdminAddress: string, recipientBatch: string[], subCollectionIdBatch: string[], metadataBatch: Array<{[key:string]:string}>): Promise<string> {
+    public async mintNFTs(nftAdminAddress: string, recipientBatch: string[], subCollectionIdBatch: string[], metadataBatch: Array<Array<{ key: string, value: string }>>): Promise<string> {
         try {
             const response = await this.fcl.send([
                 mintNFTs,
@@ -160,8 +160,8 @@ export class MatrixMarketClient implements NFTClient {
             return Promise.reject(error);
         }
     }
-
-    public async getNFTs(account: string): Promise<MatrixMarket[]> {
+    
+    public async getNFTs(account: string): Promise<number[]> {
         try {
             const response = await this.fcl.send([getNFTsScript, this.fcl.args([this.fcl.arg(account, t.Address)]), this.fcl.limit(2000)]);
             console.log(response);
