@@ -1,5 +1,5 @@
 {
-  "name": "my-app",
+  "name": "demo-js-frontend",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -10,7 +10,7 @@
     "@types/node": "^12.0.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
-    "@matrix-labs/matrix-marketplace-nft-sdk": "0.0.1",
+    "@matrix-labs/matrix-marketplace-nft-sdk": "0.0.15",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "4.0.3",
