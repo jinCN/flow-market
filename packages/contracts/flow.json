@@ -84,7 +84,6 @@
     },
     "testnet": {
       "testnet-account": [
-        "MatrixMarketOpenOffer",
         "MatrixMarket"
       ]
     }

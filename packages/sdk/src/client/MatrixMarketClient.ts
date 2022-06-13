@@ -25,8 +25,8 @@ export class MatrixMarketClient implements NFTClient {
             case FlowEnv.flowTestnet: {
                 await this.fcl
                     .config()
-                    .put("accessNode.api", "https://access-testnet.onflow.org") // connect to Flow testnet
-                    .put("challenge.handshake", "https://flow-wallet-testnet.blocto.app/authn") // use Blocto testnet wallet
+                    .put("accessNode.api", "https://rest-testnet.onflow.org") // connect to Flow testnet
+                    .put("discovery.wallet", "https://fcl-discovery.onflow.org/testnet/authn") // use Blocto testnet wallet
                     .put("0xFUNGIBLE_TOKEN_ADDRESS", "0x9a0766d93b6608b7")
                     .put("0xFUSD_ADDRESS", "0xe223d8a629e49c68")
                     .put("0xFLOW_TOKEN_ADDRESS", "0x7e60df042a9c0868")
@@ -37,8 +37,8 @@ export class MatrixMarketClient implements NFTClient {
             case FlowEnv.flowMainnet: {
                 await this.fcl
                     .config()
-                    .put("accessNode.api", "https://flow-access-mainnet.portto.io")
-                    .put("challenge.handshake", "https://flow-wallet.blocto.app/authn") // use Blocto wallet
+                    .put("accessNode.api", "https://rest-mainnet.onflow.org")
+                    .put("discovery.wallet", "https://fcl-discovery.onflow.org/authn") // use Blocto wallet
                     .put("0xFUNGIBLE_TOKEN_ADDRESS", "0xf233dcee88fe0abe")
                     .put("0xFUSD_ADDRESS", "0x3c5959b568896393")
                     .put("0xFLOW_TOKEN_ADDRESS", "0x1654653399040a61")
@@ -164,7 +164,7 @@ export class MatrixMarketClient implements NFTClient {
     public async getNFTs(account: string): Promise<number[]> {
         try {
             const response = await this.fcl.send([getNFTsScript, this.fcl.args([this.fcl.arg(account, t.Address)]), this.fcl.limit(2000)]);
-            console.log(response);
+            
             return this.fcl.decode(response);
         } catch (error) {
             console.error(error);

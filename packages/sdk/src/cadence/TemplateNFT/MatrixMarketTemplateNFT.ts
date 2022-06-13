@@ -122,14 +122,14 @@ pub contract _NFT_NAME_ : NonFungibleToken {
         // borrowNFT gets a reference to an NFT in the collection
         // so that the caller can read its metadata and call its methods
         pub fun borrowNFT(id: UInt64): &NonFungibleToken.NFT {
-            return &self.ownedNFTs[id] as &NonFungibleToken.NFT
+            return (&self.ownedNFTs[id] as &NonFungibleToken.NFT?)!
         }
 
         pub fun borrow_NFT_NAME_(id: UInt64): &_NFT_NAME_.NFT? {
             if self.ownedNFTs[id] != nil {
                 // Create an authorized reference to allow downcasting
-                let ref = &self.ownedNFTs[id] as auth &NonFungibleToken.NFT
-                return ref as! &_NFT_NAME_.NFT
+                let ref = &self.ownedNFTs[id] as auth &NonFungibleToken.NFT?
+                return ref as! &_NFT_NAME_.NFT?
             }
 
             return nil

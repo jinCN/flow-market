@@ -1526,6 +1526,17 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
+"@matrix-labs/matrix-marketplace-nft-sdk@0.0.15":
+  version "0.0.15"
+  resolved "https://registry.yarnpkg.com/@matrix-labs/matrix-marketplace-nft-sdk/-/matrix-marketplace-nft-sdk-0.0.15.tgz#d576e6736a0413946422007f98dbad38321cbdf2"
+  integrity sha512-6i9Tpps6iI7FTsTATwqyhEl1gFLL2LlDtF81rV2BTCj8L3xPoD9sScOl6mzBuq05gQOWjlcO/P8f/j670Tn9Ww==
+  dependencies:
+    "@onflow/fcl" "^1.0.2"
+    "@onflow/types" "^1.0.1"
+    "@types/elliptic" "^6.4.14"
+    elliptic "^6.5.4"
+    sha3 "^2.1.4"
+
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@mrmlnc/readdir-enhanced/-/readdir-enhanced-2.2.1.tgz#524af240d1a360527b730475ecfa1344aa540dde"

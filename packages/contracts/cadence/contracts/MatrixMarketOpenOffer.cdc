@@ -239,7 +239,7 @@ pub contract MatrixMarketOpenOffer {
 
         pub fun borrowOffer(bidId: UInt64): &Offer{OfferPublic}? {
             if self.bids[bidId] != nil {
-                return &self.bids[bidId] as! &Offer{OfferPublic}
+                return &self.bids[bidId] as! &Offer{OfferPublic}?
             } else {
                 return nil
             }
