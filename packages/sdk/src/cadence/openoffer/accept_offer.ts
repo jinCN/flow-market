@@ -15,7 +15,9 @@ transaction(bidId: UInt64, openOfferAddress: Address) {
     let receiver: &{FungibleToken.Receiver}
     let openOffer: &MatrixMarketOpenOffer.OpenOffer{MatrixMarketOpenOffer.OpenOfferPublic}
     let bid: &MatrixMarketOpenOffer.Offer{MatrixMarketOpenOffer.OfferPublic}
-
+    
+    let storefront: &NFTStorefront.Storefront
+    let toDelist: UInt64?
     prepare(acct: AuthAccount) {
         self.openOffer = getAccount(openOfferAddress)
             .getCapability<&MatrixMarketOpenOffer.OpenOffer{MatrixMarketOpenOffer.OpenOfferPublic}>(
@@ -28,6 +30,22 @@ transaction(bidId: UInt64, openOfferAddress: Address) {
                     ?? panic("No Offer with that ID in OpenOffer")
                     
         let nftId = self.bid.getDetails().nftId
+        let storefront = getAccount(address)
+        .getCapability(NFTStorefront.StorefrontPublicPath)
+        .borrow<&{NFTStorefront.StorefrontPublic}>() ?? panic("StorefrontPublicPath not found")
+        self.storefront = storefront
+        let ids = storefront.getListingIDs()
+        var i = 0
+        self.toDelist = null
+        while i < ids.length {
+            let listing = storefront.borrowListing(listingResourceID: ids[i])
+            ?? panic("No item with that ID")
+            let detail = listing.getDetails()
+            if(detail.nftType==Type<@0xsupportedNFTName.NFT>()&&detail.nftID==nftId){
+                self.toDelist = ids[i]
+                break
+            }
+        }
         
         let nftCollection = acct.borrow<&0xsupportedNFTName.Collection>(
             from: 0xsupportedNFTName.CollectionStoragePath
@@ -53,5 +71,8 @@ transaction(bidId: UInt64, openOfferAddress: Address) {
         let vault <- self.bid.purchase(item: <-self.nft)!
         self.receiver.deposit(from: <-vault)
         self.openOffer.cleanup(bidId: bidId)
+        if(self.toDelist!=null){
+            self.storefront.removeListing(listingResourceID: self.toDelist!)
+        }
     }
 }`;
