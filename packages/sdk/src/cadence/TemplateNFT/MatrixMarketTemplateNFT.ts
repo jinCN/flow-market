@@ -136,7 +136,7 @@ pub contract _NFT_NAME_ : NonFungibleToken {
         }
 
         pub fun borrowViewResolver(id: UInt64): &AnyResource{MetadataViews.Resolver} {
-            let nft = &self.ownedNFTs[id] as auth &NonFungibleToken.NFT
+            let nft = (&self.ownedNFTs[id] as auth &NonFungibleToken.NFT?)!
             let mlNFT = nft as! &_NFT_NAME_.NFT
             return mlNFT
         }

@@ -100,6 +100,7 @@ pub contract MatrixMarketOpenOffer {
         ) {
             pre {
                 rewardCapability.check(): "reward capability not valid"
+                cuts.length <= 10: "length of cuts too long"
             }
             self.vaultRefCapability = vaultRefCapability
             self.rewardCapability = rewardCapability
