@@ -160,16 +160,15 @@ pub contract MatrixMarket : NonFungibleToken {
         // mintNFT mints a new NFT with a new ID
         // and deposit it in the recipients collection using their collection reference
         pub fun mintNFT(
-            creator: Address,
             recipient: &{NonFungibleToken.CollectionPublic},
             subCollectionId: String,
             metadata: {String: String}
         ): &NonFungibleToken.NFT {
-
+            let creator = self.owner!.address
             // create a new NFT
             var newNFT <- create NFT(
                 id: MatrixMarket.totalSupply,
-                creator: creator,
+                creator: self.owner!.address,
                 subCollectionId: subCollectionId,
                 metadata: metadata
             )
